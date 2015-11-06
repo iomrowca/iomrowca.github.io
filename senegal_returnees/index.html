@@ -21,7 +21,7 @@
     <div class="row">
 	  <div class="col-md-6" ><p></p>
 			<div id ="map"><h3>Région d'origine des migrants sénégalais de retour</h3>
-      <a href="https://docs.google.com/spreadsheets/d/1bTwMxCfkfTJrJzbUx0Hd9y48AjlLaPq5lUVNROR17OU/edit?pli=1#gid=0" target="_blank">Changer les données</a>
+      <a href="https://docs.google.com/spreadsheets/d/1bTwMxCfkfTJrJzbUx0Hd9y48AjlLaPq5lUVNROR17OU/edit?pli=1#gid=0" target="_blank">Changer les données ici</a>
       <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="800" height="600"
          viewBox="0 0 817.5 578.2" enable-background="new 0 0 817.5 578.2" xml:space="preserve">
       <g id="Layer_2">
@@ -491,32 +491,24 @@ var ndx                  = crossfilter(experiments),
       regionMapDim       = ndx.dimension(function(d) {return d.region_id;}),
       regionMapGroup     = regionMapDim.group().reduceSum(function(d) { return +d.nb_returnees; }),
       
-      dateDimension      = ndx.dimension(function(d) {return d.date ;}),
-      dateGroup          = dateDimension.group(),
+      //dateDimension      = ndx.dimension(function(d) {return d.date ;}),
+      //dateGroup          = dateDimension.group(),
 
       nb_returneesDim    = ndx.dimension(function(d){return d.nb_returnees;}),
       nb_returneesGp     = nb_returneesDim.group().reduceSum(function(d) { return +d.nb_returnees; });
 
-      // regionMapGroup = experiments.reduce(
-      //   function (p, v) { ++p.n;p.tot += v.nb_returnees;return p;},
-      //   function (p, v) {--p.n;p.tot -= v.nb_returnees;return p;},
-      //   function () { return {n:0,tot:0}; }
-      // );
-
-      //console.log(nb_returneesDim);
-      //console.log(nb_returneesGp)
 
 
        mapChart.width(700)
               .height(400)
               .dimension(regionMapDim)
               .group(regionMapGroup)
-        		  //.keyAccessor(function(p) {return +p.nb_returnees;})
+        	  //.keyAccessor(function(p) {return +p.nb_returnees;})
         		  //.valueAccessor(function(p) {return p.nb_returnees;})
-        		  //.colors(["#ff7373","#ff4040","#ff0000","#bf3030","#a60000"])
-        		  //.colorDomain([0,20])
-        		  //.colorAccessor(function(d, i){return d.value;})
-
+              .colorAccessor(function(d, i){return d.value;})
+        	  .colors(['#3288bd','#e6f598','#ffffbf','#fee08b','#fc8d59','#d53e4f'])
+        	  .colorDomain([0,200])
+        	   
               .radiusValueAccessor(function(p){return Math.sqrt(+p.value)/Math.sqrt(50)*10})
 
               .r(d3.scale.linear().domain([0, 80]).range([0,40]))
@@ -529,85 +521,14 @@ var ndx                  = crossfilter(experiments),
               .point("SG05", 265, 468)
               .point("SG06", 665, 468)
               .point("SG07", 565, 368)
-              //.debug(false);
+              .debug(false);
 
-  // DistChart.width(200).height(350)
-  //         .dimension(DistDimension)
-  //         .group(DistGroup)
-  //        //.stack(governoratesByHousehold)
-  //         .elasticX(true)
-  //         .renderLabel(true)
-  //        //.ordering(function (p) { return -p.value;})
-  //         .colors(['#58585A'])
-  //         .colorDomain([0,0])
-  //         .colorAccessor(function(d, i){return 1;})
-  //         .xAxis().ticks(4).tickFormat(d3.format("s"));
-
-  // genderChart
-  //         .width(200)
-  //         .height(150)
-  //         //.slicesCap(7)
-  //         //.colors(['#EE5859'])
-  //         //.colorDomain([0,0])
-		//   .elasticX(true)
-  //         .ordering(function (p) { return -p.value;})
-  //         .dimension(GenderDim)
-  //         .group(GenderGroup)
-		//   .colors(['#EE5859'])
-  //         .colorDomain([0,0])
-  //         .colorAccessor(function(d, i){return 1;})
-  //         .xAxis().ticks(4).tickFormat(d3.format("s"));
-
-  //  shelterChart
-  //         .width(200)
-  //         .height(150)
-  //         //.slicesCap(7)
-  //         //.colors(['#EE5859'])
-  //         //.colorDomain([0,0])
-		//   .elasticX(true)
-  //         .ordering(function (p) { return -p.value;})
-  //         .dimension(ShelterDim)
-  //         .group(ShelterGroup)
-		//   .colors(['#CFCBBE'])
-  //         .colorDomain([0,0])
-  //         .colorAccessor(function(d, i){return 1;})
-  //         .xAxis().ticks(4).tickFormat(d3.format("s"));
-
-
-  // ageChart.width(250).height(350)
-  //         .dimension(AgeDim)
-  //         .group(AgeGroup)
-  //        // .stack(governoratesByHousehold)
-  //         .elasticX(true)
-  //         .renderLabel(true)
-  //         //.slicesCap(7)
-  //         .ordering(function (p) { return p.value;})
-  //         .colors(['#FFAA00'])
-  //         .colorDomain([0,0])
-  //         .colorAccessor(function(d, i){return 1;})
-  //         .xAxis().ticks(4).tickFormat(d3.format("s"));
-
-/*dc.dataTable("#dc-table-graph")
-    .width(960).height(800)
-    .dimension(governorates)
-    .group(function(d) { return "Sites Table" })
-    .size(30)
-    .columns([
-      function(d) { return d.governorate; },
-      function(d) { return d.district; },
-      function(d) { return d.household; },
-      function(d) { return d.individual; }
-    ])
-    .sortBy(function(d){ return d.governorate; })
-    .order(d3.ascending)
-    .renderlet(function (table) { table.selectAll(".dc-table-group").classed("info", true); });
-*/
-$('#reset').on('click', function (){
-  dc.filterAll();
-  //dc.renderAll();
-  dc.redrawAll();
-  return false;
-})
+// $('#reset').on('click', function (){
+//   dc.filterAll();
+//   //dc.renderAll();
+//   dc.redrawAll();
+//   return false;
+// })
 
 //  dc.renderAll();
   dc.renderAll();
