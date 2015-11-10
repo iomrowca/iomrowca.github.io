@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
+    <title>DTM | Bangui</title>
+
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="css/bootstrap.css">
+    <link type="text/css" href="css/leaflet.css" rel="stylesheet"/>
+    <link type="text/css" href="css/leaflet.markercluster.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" type="text/css" href="css/dc.css">
+    <!-- Add IntroJs styles  -->
+    <link rel="stylesheet" type="text/css" href="css/introjs.css">
+    <link rel="stylesheet" type="text/css" href="css/dashboard.css">
+    <link href="css/stylish-portfolio.css" rel="stylesheet">
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <style>
+      .map {
+        width:950px;
+        height:400px;
+      }
+    </style>
+
+</head>
+
+
+<body>
+    <div style="display: block;" class="container" id="dashboard">
+      <p id="title"><h3>CAR - DRAFT Displacement Tracking Matrix</h3></p>
+           <!-- <div class="row" id="cccm">
+                <div class="col-md-10">
+                 <br><a class="reset btn btn-primary btn-sm" id="reset" href="#">Reset All</a>&nbsp;&nbsp;<a class="reset btn btn-primary btn-sm" id="data" href="data/Interagency_FloodAssessment_24102014.xls">Download the Data</a><br><br>
+                </div>
+            </div>-->
+
+                <div>
+
+                    <h4>Number of IDPs in camps in Bangui</h4>
+                    <div id="map" class="map"></div>
+                    <div id="timeline"><h4>&nbsp;<span class="filter"></span></h4></div>
+                </div>
+
+        <br><br>
+        <!--<div id="reachbar"><a href="http://www.reach-initiative.org/"><img src="img/reach.jpg" style="background-color:#fff;border:none;height:40px" /></a></div>-->
+        <br>
+    </div>
+
+
+    <script type="text/javascript" src="js/intro.js"></script>
+    <script type="text/javascript" src="js/d3_002.js"></script>
+    <script type="text/javascript" src="js/d3.js"></script>
+    <script type="text/javascript" src="js/crossfilter.js"></script>
+    <script type="text/javascript" src="js/dc.js"></script>
+
+    <script type="text/javascript" src="js/jquery.js"></script>
+
+<!--maps-->
+    <script type="text/javascript" src="js/leaflet.js"></script>
+    <!--<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
+    <script type="text/javascript" src="js/dc.leaflet.js"></script>-->
+
+
+<script type="text/javascript">
+
+dateEventChart  = dc.barChart("#timeline");
+
+d3.csv("data/car_diff_modif.csv", function(data) {
+ 
+    
+   data.forEach(function (d) {
+
+       d.geo = d['lat']+","+d['long'];
+       d.label = d['name']+","+d['lat']+","+d['long'];
+   
+   });
+
+
+  console.log(data)
+
+  var dateFormat = d3.time.format("%d/%m/%Y");
+
+  var xf = crossfilter(data);
+
+  var all  = xf.groupAll();
+      
+
+  var locations       = xf.dimension(function(d) { return d.geo; });
+  var names           = xf.dimension(function(d) { return d.label; });
+  
+
+  //var facilitiesGroup = names.group();
+  // var facilitiesGroup = names.group().reduce(
+  //   function (p, v) { if(1=1){p.tot = p.tot - v.nb_idp ; return p;}},
+  //   function (p, v) {p.tot = p.tot - v.nb_idp;return p;},
+  //   function () { return {tot:0}; }
+  // );
+
+  var facilitiesGroup = names.group().reduce(
+      function reduceAdd(p, v) {
+      if(p == v.nb_idp){
+        console.log("fuckyoup")
+      };
+      //if(p != v.nb_idp){
+      //  p += +v.nb_idp;
+      //};
+      
+      return p;
+      },
+      function reduceRemove(p, v) {
+      if(p == v.nb_idp){
+        console.log("fuckyoup")
+      };
+        //p -= +v.nb_idp;
+        return p;
+      },
+      function reduceInitial() {
+        return 0;
+      }
+  );
+
+  var nameGroup = names.group().reduceSum(function(d) { return d.nb_idp; });
+  
+  //difference
+  var nb_idpDim   = xf.dimension(function(d) { return +d.nb_idp; });
+  var nb_idpGroup = nb_idpDim.group().reduceSum(function(d) { return +d.nb_idp; });
+
+
+  var dateDIM     = xf.dimension(function(d){ return  dateFormat.parse(d.date) });
+  var dateGroup   = dateDIM.group().reduceSum(function(d) { return +d.nb_idp; });
+
+  
+  dateEventChart
+        .width(980)
+        .height(150)
+        .margins({top: 15, right: 30, bottom: 30, left: 50})
+        .dimension(dateDIM)
+        .group(dateGroup)   //.x(d3.time.scale())
+        .x(d3.time.scale().domain([new Date(2015, 09, 01), new Date()]))
+        .xUnits(function(){return 100;})
+        .brushOn(true)
+        .elasticY(false)
+        //.xAxis().ticks(5);
+        .yAxis().tickFormat(d3.format("d"));
+      
+      dateEventChart.renderlet(function(chart){
+          chart.selectAll("g line")
+          .style("stroke", "#000")
+          //.ticks(d3.time.days,7)
+      });
+      
+var info = L.control({
+                position: 'bottomleft'
+            }); //, shown: false }); // { position: 'bottomleft' }
+            info.onAdd = function(map) {
+                // TO DO: control if dont exist before!
+
+
+                this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+                //this.options.shown = true;
+                this.update();
+                return this._div;
+            };
+            info.update = function(wpaTitle) {
+                this._div.innerHTML = (wpaTitle ?
+                    '<b>' + wpaTitle + '</b>' : 'Hover over a Wathab Project');
+
+            };
+
+function updateMapPoints() {
+        
+        wpaCluster.clearLayers();
+        
+        
+        if (!map.hasLayer(wpaCluster)) return;
+        map.removeLayer(wpaCluster);
+        
+        var markerList = [];
+
+        nameGroup.top(Infinity).forEach(function(p) {
+        //facilitiesGroup.top(Infinity).forEach(function(p) {
+          console.log(p);
+
+          var latlng = p.key.split(",")
+          var name = latlng[0];
+          var lat = latlng[1];
+          var lng = latlng[2];
+          //console.log(lat)
+
+
+          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#AAAAAA",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
+
+          wpaMarker.on('mouseover',function (e) {
+
+            info.addTo(map);
+            info.update(name + " : "+ p.value);
+            
+          });
+          
+          wpaMarker.on('mouseout',function (e) {
+            info.update();
+            info.removeFrom(map);
+            //info.options.shown = false;
+          });
+          
+          markerList.push(wpaMarker);
+          
+          wpaCluster.addLayer(wpaMarker);
+
+        });
+        
+        map.addLayer(wpaCluster);
+
+      };
+
+ 
+  $('#reset').on('click', function (){
+    dc.filterAll();
+    dc.redrawAll();
+    return false;
+  })
+
+
+  dc.renderAll();
+
+   var OpenStreetMap_HOT = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+       maxZoom: 19,
+       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+   });
+
+   var map = L.map('map',{maxZoom: 13,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.564533], 12);
+
+   wpaCluster = L.featureGroup();
+   map.addLayer(wpaCluster);
+
+  updateMapPoints();
+  
+  for (var i = 0; i < dc.chartRegistry.list().length; i++) {
+      var chartI = dc.chartRegistry.list()[i];
+      chartI.on("filtered", function(chart, filter){ 
+        dc.redrawAll();
+        updateMapPoints();
+      });
+  }
+
+});
+
+</script>
+
+ <script src="js/bootstrap.js"></script>
+
+
+</body>
+
+
+</html>
