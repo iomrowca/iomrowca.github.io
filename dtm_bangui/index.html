@@ -15,8 +15,6 @@
     <!-- Add IntroJs styles  -->
     <link rel="stylesheet" type="text/css" href="css/introjs.css">
     <link rel="stylesheet" type="text/css" href="css/dashboard.css">
-    <link href="css/stylish-portfolio.css" rel="stylesheet">
-    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <style>
       .map {
         width:950px;
@@ -66,23 +64,24 @@
 
 <script type="text/javascript">
 
-dateEventChart  = dc.barChart("#timeline");
 
-  // var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1bTwMxCfkfTJrJzbUx0Hd9y48AjlLaPq5lUVNROR17OU/pubhtml';
+window.onload = function() { init() };
 
-  // function init() {
-  //   Tabletop.init( { key: public_spreadsheet_url,
-  //                    callback: showInfo,
-  //                    simpleSheet: true } )
-  // }
+   var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1eSfbXkMzQ2Dsn35KmDnamVpw3URhfzM43RLkxgRJ22s/pubhtml';
 
-  // function showInfo(experiments, tabletop) {
+   function init() {
+     Tabletop.init( { key: public_spreadsheet_url,
+                      callback: showInfo,
+                      simpleSheet: true } )
+   }
 
-d3.csv("data/car_diff_modif.csv", function(data) {
+   function showInfo(data, tabletop) {
+
+//d3.csv("data/car_diff_modif.csv", function(data) {
   
   d3.csv("data/bangui_poi.csv", function(poi) {
     
-
+console.log(poi);
 
   data.forEach(function(occurence) {
 
@@ -96,14 +95,6 @@ d3.csv("data/car_diff_modif.csv", function(data) {
           occurence.lng = (result[0] !== undefined) ? result[0].long : null;
           occurence.geo =  (result[0] !== undefined) ? result[0].lat +","+result[0].long : null;
           occurence.label =  (result[0] !== undefined) ? result[0].Name+","+result[0].lat +","+result[0].long : "Unknow,0,0";
-           
-          //
-
-      
-
-
-       //d.geo = d['lat']+","+d['long'];
-       //d.label = d['name']+","+d['lat']+","+d['long'];
    
    });
 
@@ -111,7 +102,8 @@ d3.csv("data/car_diff_modif.csv", function(data) {
   console.log(data);
 
  // console.log(data)
-
+  
+  dateEventChart  = dc.barChart("#timeline");
   var dateFormat = d3.time.format("%d/%m/%Y");
 
   var xf = crossfilter(data);
@@ -253,7 +245,7 @@ function updateMapPoints() {
   }
 
 });
-});
+};
 
 </script>
 
