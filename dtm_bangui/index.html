@@ -12,9 +12,7 @@
     <link type="text/css" href="css/leaflet.markercluster.css" rel="stylesheet"/>
 
     <link rel="stylesheet" type="text/css" href="css/dc.css">
-    <!-- Add IntroJs styles  -->
-    <link rel="stylesheet" type="text/css" href="css/introjs.css">
-    <link rel="stylesheet" type="text/css" href="css/dashboard.css">
+
     <style>
       .map {
         width:950px;
@@ -27,16 +25,9 @@
 
 <body>
     <div style="display: block;" class="container" id="dashboard">
-      <p id="title"><h3>CAR - DRAFT Displacement Tracking Matrix</h3></p>
-           <!-- <div class="row" id="cccm">
-                <div class="col-md-10">
-                 <br><a class="reset btn btn-primary btn-sm" id="reset" href="#">Reset All</a>&nbsp;&nbsp;<a class="reset btn btn-primary btn-sm" id="data" href="data/Interagency_FloodAssessment_24102014.xls">Download the Data</a><br><br>
-                </div>
-            </div>-->
-
+      <p id="title"><h3>DRAFT - Suivi Bangui DTM </h3></p>
                 <div>
-
-                    <h4>Number of IDPs in camps in Bangui</h4>
+                    <h4>Number of IDPs in camps in Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank">Changer les données ici </a></h4> <br>
                     <div id="map" class="map"></div>
                     <div id="timeline"><h4>&nbsp;<span class="filter"></span></h4></div>
                 </div>
@@ -45,7 +36,7 @@
         <!--<div id="reachbar"><a href="http://www.reach-initiative.org/"><img src="img/reach.jpg" style="background-color:#fff;border:none;height:40px" /></a></div>-->
         <br>
     </div>
-
+    <div id="data"></div>
 
     <script type="text/javascript" src="js/intro.js"></script>
     <script type="text/javascript" src="js/d3_002.js"></script>
@@ -55,34 +46,41 @@
 
     <script type="text/javascript" src="js/jquery.js"></script>
 
-<!--maps-->
+    <!--maps-->
     <script type="text/javascript" src="js/leaflet.js"></script>
     <script type="text/javascript" src="js/tabletop.js"></script>
-    <!--<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
-    <script type="text/javascript" src="js/dc.leaflet.js"></script>-->
 
 
 <script type="text/javascript">
-
-
+var a,b;
 window.onload = function() { init() };
-
-   var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1eSfbXkMzQ2Dsn35KmDnamVpw3URhfzM43RLkxgRJ22s/pubhtml';
-
-   function init() {
-     Tabletop.init( { key: public_spreadsheet_url,
-                      callback: showInfo,
-                      simpleSheet: true } )
-   }
-
-   function showInfo(data, tabletop) {
-
-//d3.csv("data/car_diff_modif.csv", function(data) {
   
-  d3.csv("data/bangui_poi.csv", function(poi) {
-    
-console.log(poi);
+   //form the google spreadshhet
+   var poi_bangui    = 'https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/pubhtml';
+   //var evolution_idp ='https://docs.google.com/spreadsheets/d/1eSfbXkMzQ2Dsn35KmDnamVpw3URhfzM43RLkxgRJ22s/pubhtml';
 
+     function init() {
+        Tabletop({
+            key: poi_bangui,
+            callback: showInfo,
+            simpleSheet: false
+        });   
+      }
+
+    var count = 0;
+
+   
+   function showInfo(datag, tabletop) {
+    evol = datag.Evol
+    data = evol.elements;
+    poi_gp = datag.POI; 
+    poi = poi_gp.elements
+    //console.log(evol.elements)
+    console.log(poi)
+  
+        //div.innerHTML = div.innerHTML + html;
+
+  console.log(data)
   data.forEach(function(occurence) {
 
           var result = poi.filter(function(p) {
@@ -99,7 +97,7 @@ console.log(poi);
    });
 
   
-  console.log(data);
+  //console.log(data);
 
  // console.log(data)
   
@@ -128,11 +126,11 @@ console.log(poi);
   
   dateEventChart
         .width(980)
-        .height(150)
-        .margins({top: 15, right: 30, bottom: 30, left: 50})
+        .height(100)
+        .margins({top: 10, right: 30, bottom: 30, left: 35})
         .dimension(dateDIM)
         .group(dateGroup)   //.x(d3.time.scale())
-        .x(d3.time.scale().domain([new Date(2015, 09, 01), new Date()]))
+        .x(d3.time.scale().domain([new Date(2015, 08, 01), new Date()]))
         .xUnits(function(){return 100;})
         .brushOn(true)
         .elasticY(false)
@@ -141,7 +139,7 @@ console.log(poi);
       
       dateEventChart.renderlet(function(chart){
           chart.selectAll("g line")
-          .style("stroke", "#000")
+          //.style("stroke", "#000")
           //.ticks(d3.time.days,7)
       });
       
@@ -229,7 +227,7 @@ function updateMapPoints() {
        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
    });
 
-   var map = L.map('map',{maxZoom: 13,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.564533], 12);
+   var map = L.map('map',{maxZoom: 15,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.564533], 12);
 
    wpaCluster = L.featureGroup();
    map.addLayer(wpaCluster);
@@ -244,8 +242,8 @@ function updateMapPoints() {
       });
   }
 
-});
 };
+//};
 
 </script>
 
