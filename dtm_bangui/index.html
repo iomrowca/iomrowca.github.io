@@ -68,17 +68,17 @@
 
 dateEventChart  = dc.barChart("#timeline");
 
-  var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1bTwMxCfkfTJrJzbUx0Hd9y48AjlLaPq5lUVNROR17OU/pubhtml';
+  // var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1bTwMxCfkfTJrJzbUx0Hd9y48AjlLaPq5lUVNROR17OU/pubhtml';
 
-  function init() {
-    Tabletop.init( { key: public_spreadsheet_url,
-                     callback: showInfo,
-                     simpleSheet: true } )
-  }
+  // function init() {
+  //   Tabletop.init( { key: public_spreadsheet_url,
+  //                    callback: showInfo,
+  //                    simpleSheet: true } )
+  // }
 
-  function showInfo(experiments, tabletop) {
+  // function showInfo(experiments, tabletop) {
 
-//d3.csv("data/car_diff_modif.csv", function(data) {
+d3.csv("data/car_diff_modif.csv", function(data) {
   
   d3.csv("data/bangui_poi.csv", function(poi) {
     
