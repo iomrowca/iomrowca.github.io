@@ -59,6 +59,7 @@
 
 <!--maps-->
     <script type="text/javascript" src="js/leaflet.js"></script>
+    <script type="text/javascript" src="js/tabletop.js"></script>
     <!--<script type="text/javascript" src="js/leaflet.markercluster.js"></script>
     <script type="text/javascript" src="js/dc.leaflet.js"></script>-->
 
@@ -67,18 +68,49 @@
 
 dateEventChart  = dc.barChart("#timeline");
 
-d3.csv("data/car_diff_modif.csv", function(data) {
- 
-    
-   data.forEach(function (d) {
+  var public_spreadsheet_url = 'https://docs.google.com/spreadsheets/d/1bTwMxCfkfTJrJzbUx0Hd9y48AjlLaPq5lUVNROR17OU/pubhtml';
 
-       d.geo = d['lat']+","+d['long'];
-       d.label = d['name']+","+d['lat']+","+d['long'];
+  function init() {
+    Tabletop.init( { key: public_spreadsheet_url,
+                     callback: showInfo,
+                     simpleSheet: true } )
+  }
+
+  function showInfo(experiments, tabletop) {
+
+//d3.csv("data/car_diff_modif.csv", function(data) {
+  
+  d3.csv("data/bangui_poi.csv", function(poi) {
+    
+
+
+  data.forEach(function(occurence) {
+
+          var result = poi.filter(function(p) {
+              return p.SSID === occurence.SSID;
+          });
+
+          //delete occurence.SSID;
+          occurence.Name = (result[0] !== undefined) ? result[0].Name : null;
+          occurence.lat = (result[0] !== undefined) ? result[0].lat : null;
+          occurence.lng = (result[0] !== undefined) ? result[0].long : null;
+          occurence.geo =  (result[0] !== undefined) ? result[0].lat +","+result[0].long : null;
+          occurence.label =  (result[0] !== undefined) ? result[0].Name+","+result[0].lat +","+result[0].long : "Unknow,0,0";
+           
+          //
+
+      
+
+
+       //d.geo = d['lat']+","+d['long'];
+       //d.label = d['name']+","+d['lat']+","+d['long'];
    
    });
 
+  
+  console.log(data);
 
-  console.log(data)
+ // console.log(data)
 
   var dateFormat = d3.time.format("%d/%m/%Y");
 
@@ -88,38 +120,8 @@ d3.csv("data/car_diff_modif.csv", function(data) {
       
 
   var locations       = xf.dimension(function(d) { return d.geo; });
-  var names           = xf.dimension(function(d) { return d.label; });
   
-
-  //var facilitiesGroup = names.group();
-  // var facilitiesGroup = names.group().reduce(
-  //   function (p, v) { if(1=1){p.tot = p.tot - v.nb_idp ; return p;}},
-  //   function (p, v) {p.tot = p.tot - v.nb_idp;return p;},
-  //   function () { return {tot:0}; }
-  // );
-
-  var facilitiesGroup = names.group().reduce(
-      function reduceAdd(p, v) {
-      if(p == v.nb_idp){
-        console.log("fuckyoup")
-      };
-      //if(p != v.nb_idp){
-      //  p += +v.nb_idp;
-      //};
-      
-      return p;
-      },
-      function reduceRemove(p, v) {
-      if(p == v.nb_idp){
-        console.log("fuckyoup")
-      };
-        //p -= +v.nb_idp;
-        return p;
-      },
-      function reduceInitial() {
-        return 0;
-      }
-  );
+  var names           = xf.dimension(function(d) { return d.label; });
 
   var nameGroup = names.group().reduceSum(function(d) { return d.nb_idp; });
   
@@ -183,11 +185,16 @@ function updateMapPoints() {
         //facilitiesGroup.top(Infinity).forEach(function(p) {
           console.log(p);
 
-          var latlng = p.key.split(",")
-          var name = latlng[0];
-          var lat = latlng[1];
-          var lng = latlng[2];
-          //console.log(lat)
+          var latlng = p.key.split(",");
+
+          var name = (latlng[0] !== undefined) ? latlng[0] : null; 
+          var lat = (latlng[1] !== "") ? latlng[1] : "0"; 
+          var lng = (latlng[2] !== "") ? latlng[2] : "0"; 
+          //var lat = latlng[1];
+          //var lng = latlng[2];
+          console.log(lat);
+          console.log(lng);
+
 
 
           var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#AAAAAA",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
@@ -245,6 +252,7 @@ function updateMapPoints() {
       });
   }
 
+});
 });
 
 </script>
