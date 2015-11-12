@@ -128,7 +128,7 @@ window.onload = function() { init() };
 
   
   dateEventChart
-        .width(940)
+        .width(950)
         .height(100)
         .margins({top: 10, right: 30, bottom: 30, left: 35})
         .dimension(dateDIM)
@@ -136,10 +136,10 @@ window.onload = function() { init() };
         .x(d3.time.scale().domain([new Date(2015, 08, 01), new Date()]))
         .xUnits(function(){return 100;})
         .brushOn(true)
-        .elasticY(true)
-        .y(d3.scale.linear().domain([90, 10000]))
+        .elasticY(false)
+        //.y(d3.scale.linear().domain([90, 10000]))
         //.xAxis().ticks(5);
-        .yAxis().tickFormat(d3.format("d"));
+        .yAxis().ticks(4).tickFormat(d3.format("d"));
       
       dateEventChart.renderlet(function(chart){
           chart.selectAll("g line")
@@ -190,7 +190,7 @@ function updateMapPoints() {
           console.log(lat);
           console.log(lng);
 
-          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#BDBDBD",Color:"#AAAAAA",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
+          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#AAAAAA",color:"#004680",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
 
           wpaMarker.on('mouseover',function (e) {
 
