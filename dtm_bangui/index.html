@@ -14,9 +14,14 @@
     <link rel="stylesheet" type="text/css" href="css/dc.css">
 
     <style>
-      .map {
-        width:950px;
+      #map {
+        margin-left: 15px;
+        width:450px;
         height:400px;
+      }
+      #data {
+        height:400px;
+        overflow-y: auto;
       }
     </style>
 
@@ -26,27 +31,28 @@
 <body>
     <div style="display: block;" class="container" id="dashboard">
       <p id="title"><h3>DRAFT - Suivi Bangui DTM </h3></p>
-                <div>
-                    <h4>Number of IDPs in camps in Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank">Changer les données ici </a></h4> <br>
-                    <div id="map" class="map"></div>
+                <div >
+                    <h4>Number of IDPs in camps in Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank">Changer les données ici </a></h4>
+                    <div class="row">
+                      <div id="map" class="col-sm-6"></div>
+                      <div id="data"class="col-sm-6" ></div>
+                    </div>
                     <div id="timeline"><h4>&nbsp;<span class="filter"></span></h4></div>
                 </div>
 
         <br><br>
         <!--<div id="reachbar"><a href="http://www.reach-initiative.org/"><img src="img/reach.jpg" style="background-color:#fff;border:none;height:40px" /></a></div>-->
         <br>
+        
     </div>
-    <div id="data"></div>
+    
 
     <script type="text/javascript" src="js/intro.js"></script>
     <script type="text/javascript" src="js/d3_002.js"></script>
     <script type="text/javascript" src="js/d3.js"></script>
     <script type="text/javascript" src="js/crossfilter.js"></script>
     <script type="text/javascript" src="js/dc.js"></script>
-
     <script type="text/javascript" src="js/jquery.js"></script>
-
-    <!--maps-->
     <script type="text/javascript" src="js/leaflet.js"></script>
     <script type="text/javascript" src="js/tabletop.js"></script>
 
@@ -55,9 +61,8 @@
 var a,b;
 window.onload = function() { init() };
   
-   //form the google spreadshhet
+   //form google sheet / Not in Edition
    var poi_bangui    = 'https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/pubhtml';
-   //var evolution_idp ='https://docs.google.com/spreadsheets/d/1eSfbXkMzQ2Dsn35KmDnamVpw3URhfzM43RLkxgRJ22s/pubhtml';
 
      function init() {
         Tabletop({
@@ -66,41 +71,39 @@ window.onload = function() { init() };
             simpleSheet: false
         });   
       }
-
-    var count = 0;
-
    
    function showInfo(datag, tabletop) {
-    evol = datag.Evol
+   
+    evol = datag.Evol;
     data = evol.elements;
     poi_gp = datag.POI; 
-    poi = poi_gp.elements
-    //console.log(evol.elements)
-    console.log(poi)
-  
-        //div.innerHTML = div.innerHTML + html;
+    poi = poi_gp.elements;
+    needss=datag.Needs;
+    needs=needss.elements;
+    console.log(needs)
+    // Gestionnaire 
+    // Needs
 
-  console.log(data)
-  data.forEach(function(occurence) {
+    console.log(data)
+    data.forEach(function(occurence) {
 
           var result = poi.filter(function(p) {
               return p.SSID === occurence.SSID;
           });
+
+          //var agence = 
 
           //delete occurence.SSID;
           occurence.Name = (result[0] !== undefined) ? result[0].Name : null;
           occurence.lat = (result[0] !== undefined) ? result[0].lat : null;
           occurence.lng = (result[0] !== undefined) ? result[0].long : null;
           occurence.geo =  (result[0] !== undefined) ? result[0].lat +","+result[0].long : null;
-          occurence.label =  (result[0] !== undefined) ? result[0].Name+","+result[0].lat +","+result[0].long : "Unknow,0,0";
+          occurence.label =  (result[0] !== undefined) ? result[0].Name+","+result[0].lat +","+result[0].long+","+result[0].SSID : "Unknow,0,0";
    
    });
 
-  
-  //console.log(data);
-
- // console.log(data)
-  
+    $("#data").html("<small>Clicker sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
+    
   dateEventChart  = dc.barChart("#timeline");
   var dateFormat = d3.time.format("%d/%m/%Y");
 
@@ -125,7 +128,7 @@ window.onload = function() { init() };
 
   
   dateEventChart
-        .width(980)
+        .width(940)
         .height(100)
         .margins({top: 10, right: 30, bottom: 30, left: 35})
         .dimension(dateDIM)
@@ -133,7 +136,8 @@ window.onload = function() { init() };
         .x(d3.time.scale().domain([new Date(2015, 08, 01), new Date()]))
         .xUnits(function(){return 100;})
         .brushOn(true)
-        .elasticY(false)
+        .elasticY(true)
+        .y(d3.scale.linear().domain([90, 10000]))
         //.xAxis().ticks(5);
         .yAxis().tickFormat(d3.format("d"));
       
@@ -142,24 +146,25 @@ window.onload = function() { init() };
           //.style("stroke", "#000")
           //.ticks(d3.time.days,7)
       });
-      
+
+
 var info = L.control({
-                position: 'bottomleft'
+                position: 'topright'
             }); //, shown: false }); // { position: 'bottomleft' }
-            info.onAdd = function(map) {
-                // TO DO: control if dont exist before!
 
+info.onAdd = function(map) {
 
-                this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-                //this.options.shown = true;
-                this.update();
-                return this._div;
-            };
-            info.update = function(wpaTitle) {
-                this._div.innerHTML = (wpaTitle ?
-                    '<b>' + wpaTitle + '</b>' : 'Hover over a Wathab Project');
+  this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+          //this.options.shown = true;
+  this.update();
+  return this._div;
+};
 
-            };
+info.update = function(wpaTitle) {
+      this._div.innerHTML = (wpaTitle ?
+        '<b>' + wpaTitle + '</b>' : 'Hover over a Wathab Project');
+
+};
 
 function updateMapPoints() {
         
@@ -180,14 +185,12 @@ function updateMapPoints() {
           var name = (latlng[0] !== undefined) ? latlng[0] : null; 
           var lat = (latlng[1] !== "") ? latlng[1] : "0"; 
           var lng = (latlng[2] !== "") ? latlng[2] : "0"; 
-          //var lat = latlng[1];
-          //var lng = latlng[2];
+          var ssid = (latlng[3] !== "") ? latlng[3] : null; 
+
           console.log(lat);
           console.log(lng);
 
-
-
-          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#AAAAAA",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
+          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#BDBDBD",Color:"#AAAAAA",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
 
           wpaMarker.on('mouseover',function (e) {
 
@@ -202,6 +205,40 @@ function updateMapPoints() {
             //info.options.shown = false;
           });
           
+          var count = 0;
+          wpaMarker.on('click',function (e) {
+              $("#data").empty();
+
+              var needresult = needs.filter(function(p) {
+                  //console.log(p)
+                  return p.Code_Site === ssid;
+              });
+
+              console.log(needresult[0]);
+
+              //var html = "";
+              $.each( needresult[0], function( key, value ) {
+                //console.log( key + ": " + value );
+                $("#data").append(key+ " : " + value +"<hr>");
+              });
+              
+              // needresult.forEach(function(occ) {
+                    
+              //   html = "Gestionnaire/Facilitation des sites"+ " : " + occ['Gestionnaire/Facilitation des sites'] +"<br>";
+   
+              // });
+
+             //var div = document.getElementById('data');
+              
+             //var html = "<h3>" + name +"&nbsp;-&nbsp;"+ ssid +"</h3><br><hr>";
+
+
+              //div.innerHTML = html;
+          
+          });
+
+
+
           markerList.push(wpaMarker);
           
           wpaCluster.addLayer(wpaMarker);
@@ -227,7 +264,7 @@ function updateMapPoints() {
        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
    });
 
-   var map = L.map('map',{maxZoom: 15,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.564533], 12);
+   var map = L.map('map',{maxZoom: 18,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.564533], 12);
 
    wpaCluster = L.featureGroup();
    map.addLayer(wpaCluster);
