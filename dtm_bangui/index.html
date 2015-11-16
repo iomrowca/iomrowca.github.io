@@ -16,12 +16,22 @@
     <style>
       #map {
         margin-left: 15px;
-        width:450px;
-        height:400px;
+        width:500px;
+        height:600px;
       }
       #data {
-        height:400px;
+        height:600px;
+        width:470px;
         overflow-y: auto;
+      }
+      a{
+        color:#C0392B;
+      }
+      a:hover{
+        color:#C0392B;
+      }
+      .info{
+        color:#120029;
       }
     </style>
 
@@ -29,15 +39,15 @@
 
 
 <body>
-    <div style="display: block;" class="container" id="dashboard">
+    <div class="container">
       <p id="title"><h3>DRAFT - Suivi Bangui DTM </h3></p>
                 <div >
-                    <h4>Number of IDPs in camps in Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank">Changer les données ici </a></h4>
+                    <h4>Nombre de PDI dans les camps de Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank">Changer les données ici </a></h4>
                     <div class="row">
-                      <div id="map" class="col-sm-6"></div>
-                      <div id="data"class="col-sm-6" ></div>
+                      <div id="map" class="col-md-6"></div>
+                      <div id="data"class="col-md-6" ></div>
                     </div>
-                    <div id="timeline"><h4>&nbsp;<span class="filter"></span></h4></div>
+                    <!--<div id="timeline"><h4><span class="filter"></span></h4></div>-->
                 </div>
 
         <br><br>
@@ -58,50 +68,57 @@
 
 
 <script type="text/javascript">
-var a,b;
+
 window.onload = function() { init() };
   
-   //form google sheet / Not in Edition
-   var poi_bangui    = 'https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/pubhtml';
-
-     function init() {
-        Tabletop({
-            key: poi_bangui,
-            callback: showInfo,
-            simpleSheet: false
-        });   
-      }
+  var poi_bangui    = 'https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/pubhtml';
+    function init() {
+      Tabletop({
+          key: poi_bangui,
+          callback: showInfo,
+          simpleSheet: false
+      });   
+    };
    
-   function showInfo(datag, tabletop) {
-   
+  function showInfo(datag, tabletop) {
+    //Get all the data form the tabs in 3 arrays.
     evol = datag.Evol;
     data = evol.elements;
     poi_gp = datag.POI; 
     poi = poi_gp.elements;
     needss=datag.Needs;
     needs=needss.elements;
-    console.log(needs)
-    // Gestionnaire 
-    // Needs
 
-    console.log(data)
+    //Add the Lat and Long to the Evolution:
     data.forEach(function(occurence) {
 
-          var result = poi.filter(function(p) {
-              return p.SSID === occurence.SSID;
-          });
+      //Join the values with the SSID
+      var result = poi.filter(function(p) {
+        return p.SSID === occurence.SSID;
+      });
 
-          //var agence = 
+      occurence.Name = (result[0] !== undefined) ? result[0].Name : null;
+      occurence.lat = (result[0] !== undefined) ? result[0].lat : null;
+      occurence.lng = (result[0] !== undefined) ? result[0].long : null;
+      occurence.geo =  (result[0] !== undefined) ? result[0].lat +","+result[0].long : null;
+      occurence.label =  (result[0] !== undefined) ? result[0].Name+","+result[0].lat +","+result[0].long+","+result[0].SSID : "Unknow,0,0";
+          //occurence.totnb = (nb_total[0] !== undefined) ? nb_total[0]['Total des PDIs'] : null;
+    });
 
-          //delete occurence.SSID;
-          occurence.Name = (result[0] !== undefined) ? result[0].Name : null;
-          occurence.lat = (result[0] !== undefined) ? result[0].lat : null;
-          occurence.lng = (result[0] !== undefined) ? result[0].long : null;
-          occurence.geo =  (result[0] !== undefined) ? result[0].lat +","+result[0].long : null;
-          occurence.label =  (result[0] !== undefined) ? result[0].Name+","+result[0].lat +","+result[0].long+","+result[0].SSID : "Unknow,0,0";
-   
-   });
+    //Add the lat and Long to the needs:
+    needs.forEach(function(need_camp) {
+      //Join the values with the SSID
+      //TODO Clean the SSID in the google sheet 
+      var resjoin = poi.filter(function(p) {
+        return p.SSID === need_camp.Code_Site;
+      });
+      need_camp.lat = (resjoin[0] !== undefined) ? resjoin[0].lat : null;
+      need_camp.lng = (resjoin[0] !== undefined) ? resjoin[0].long : null;
+      need_camp.geo =  (resjoin[0] !== undefined) ? resjoin[0].lat +","+resjoin[0].long : null;
+      need_camp.label =  (resjoin[0] !== undefined) ? resjoin[0].Name+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].SSID+","+need_camp['Total des PDIs'] : "Unknow,0,0,Unknow,Unknow";
+    });
 
+    //console.log(data)
     $("#data").html("<small>Clicker sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
     
   dateEventChart  = dc.barChart("#timeline");
@@ -110,14 +127,18 @@ window.onload = function() { init() };
   var xf = crossfilter(data);
 
   var all  = xf.groupAll();
-      
+  
+  var ndx = crossfilter(needs);
 
   var locations       = xf.dimension(function(d) { return d.geo; });
-  
+  var location_tot    = ndx.dimension(function(d) { return d.geo; });
+
   var names           = xf.dimension(function(d) { return d.label; });
+  var names_tot       = ndx.dimension(function(d) { return d.label; });
 
   var nameGroup = names.group().reduceSum(function(d) { return d.nb_idp; });
-  
+  var nametotGroup = names_tot.group().reduceSum(function(d) { return d['Total des PDIs'] ; });
+
   //difference
   var nb_idpDim   = xf.dimension(function(d) { return +d.nb_idp; });
   var nb_idpGroup = nb_idpDim.group().reduceSum(function(d) { return +d.nb_idp; });
@@ -128,7 +149,7 @@ window.onload = function() { init() };
 
   
   dateEventChart
-        .width(950)
+        .width(900)
         .height(100)
         .margins({top: 10, right: 30, bottom: 30, left: 35})
         .dimension(dateDIM)
@@ -166,19 +187,18 @@ info.update = function(wpaTitle) {
 
 };
 
+
+
 function updateMapPoints() {
         
         wpaCluster.clearLayers();
-        
         
         if (!map.hasLayer(wpaCluster)) return;
         map.removeLayer(wpaCluster);
         
         var markerList = [];
 
-        nameGroup.top(Infinity).forEach(function(p) {
-        //facilitiesGroup.top(Infinity).forEach(function(p) {
-          console.log(p);
+        nametotGroup.top(Infinity).forEach(function(p) {
 
           var latlng = p.key.split(",");
 
@@ -187,53 +207,31 @@ function updateMapPoints() {
           var lng = (latlng[2] !== "") ? latlng[2] : "0"; 
           var ssid = (latlng[3] !== "") ? latlng[3] : null; 
 
-          console.log(lat);
-          console.log(lng);
+          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
 
-          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#AAAAAA",color:"#004680",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
+            wpaMarker.on('mouseover',function (e) {
 
-          wpaMarker.on('mouseover',function (e) {
-
-            info.addTo(map);
-            info.update(name + " : "+ p.value);
-            
-          });
+              info.addTo(map);
+              info.update(name + " : "+ p.value);
+              
+            });
           
-          wpaMarker.on('mouseout',function (e) {
-            info.update();
-            info.removeFrom(map);
-            //info.options.shown = false;
-          });
+            wpaMarker.on('mouseout',function (e) {
+              info.update();
+              info.removeFrom(map);
+              //info.options.shown = false;
+            });
           
-          var count = 0;
-          wpaMarker.on('click',function (e) {
+            wpaMarker.on('click',function (e) {
               $("#data").empty();
 
               var needresult = needs.filter(function(p) {
-                  //console.log(p)
                   return p.Code_Site === ssid;
               });
 
-              console.log(needresult[0]);
-
-              //var html = "";
               $.each( needresult[0], function( key, value ) {
-                //console.log( key + ": " + value );
                 $("#data").append(key+ " : " + value +"<hr>");
-              });
-              
-              // needresult.forEach(function(occ) {
-                    
-              //   html = "Gestionnaire/Facilitation des sites"+ " : " + occ['Gestionnaire/Facilitation des sites'] +"<br>";
-   
-              // });
-
-             //var div = document.getElementById('data');
-              
-             //var html = "<h3>" + name +"&nbsp;-&nbsp;"+ ssid +"</h3><br><hr>";
-
-
-              //div.innerHTML = html;
+              }); 
           
           });
 
@@ -245,9 +243,9 @@ function updateMapPoints() {
 
         });
         
-        map.addLayer(wpaCluster);
+      map.addLayer(wpaCluster);
 
-      };
+  };
 
  
   $('#reset').on('click', function (){
@@ -264,7 +262,7 @@ function updateMapPoints() {
        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
    });
 
-   var map = L.map('map',{maxZoom: 18,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.564533], 12);
+   var map = L.map('map',{maxZoom: 18,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.544533], 13);
 
    wpaCluster = L.featureGroup();
    map.addLayer(wpaCluster);
