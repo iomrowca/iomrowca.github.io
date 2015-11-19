@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
     <title>DTM | Bangui</title>
 
@@ -16,13 +15,16 @@
     <style>
       #map {
         margin-left: 15px;
-        width:500px;
+        width:800px;
         height:600px;
       }
       #data {
+        width:270px;
         height:600px;
-        width:470px;
+        color:white;
+        background-color: #3d3d3d;
         overflow-y: auto;
+
       }
       a{
         color:#C0392B;
@@ -40,12 +42,12 @@
 
 <body>
     <div class="container">
-      <p id="title"><h3>DRAFT - Suivi Bangui DTM </h3></p>
+      <p id="title"><h3><span style="color:#C0392B">DRAFT</span> - Suivi Bangui DTM - Online Version</h3></p>
                 <div >
-                    <h4>Nombre de PDI dans les camps de Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank">Changer les données ici </a></h4>
+                    <h4>Nombre de PDI dans les camps de Bangui <a href="https://docs.google.com/spreadsheets/d/1W2zayEHo0HCXmSs0e77qiSABYpRiNJmtAnBKZDXGhRs/edit#gid=0" target="_blank"> - Changer les données du google spreadsheet en cliquant ici </a></h4>
                     <div class="row">
-                      <div id="map" class="col-md-6"></div>
-                      <div id="data"class="col-md-6" ></div>
+                      <div id="map" class="col-md-8"></div>
+                      <div id="data"class="col-md-3"></div>
                     </div>
                     <!--<div id="timeline"><h4><span class="filter"></span></h4></div>-->
                 </div>
@@ -89,6 +91,14 @@ window.onload = function() { init() };
     needss=datag.Needs;
     needs=needss.elements;
 
+  // scsv = d3.dsv(';', "text/csv; charset=ISO-8859-1");
+
+  //   scsv("data/car_diff_modif.csv", function(data) {
+
+  //   scsv("data/needs.csv", function(needs) {
+    
+  //   scsv("data/bangui_poi.csv", function(poi) {
+ 
     //Add the Lat and Long to the Evolution:
     data.forEach(function(occurence) {
 
@@ -119,73 +129,73 @@ window.onload = function() { init() };
     });
 
     //console.log(data)
-    $("#data").html("<small>Clicker sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
+    $("#data").html("<br><small>Cliquer sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
     
-  dateEventChart  = dc.barChart("#timeline");
-  var dateFormat = d3.time.format("%d/%m/%Y");
+    dateEventChart  = dc.barChart("#timeline");
+    var dateFormat = d3.time.format("%d/%m/%Y");
 
-  var xf = crossfilter(data);
+    var xf = crossfilter(data);
 
-  var all  = xf.groupAll();
+    var all  = xf.groupAll();
+    
+    var ndx = crossfilter(needs);
+
+    var locations       = xf.dimension(function(d) { return d.geo; });
+    var location_tot    = ndx.dimension(function(d) { return d.geo; });
+
+    var names           = xf.dimension(function(d) { return d.label; });
+    var names_tot       = ndx.dimension(function(d) { return d.label; });
+
+    var nameGroup = names.group().reduceSum(function(d) { return d.nb_idp; });
+    var nametotGroup = names_tot.group().reduceSum(function(d) { return d['Total des PDIs'] ; });
+
+    //difference
+    var nb_idpDim   = xf.dimension(function(d) { return +d.nb_idp; });
+    var nb_idpGroup = nb_idpDim.group().reduceSum(function(d) { return +d.nb_idp; });
+
+
+    var dateDIM     = xf.dimension(function(d){ return  dateFormat.parse(d.date) });
+    var dateGroup   = dateDIM.group().reduceSum(function(d) { return +d.nb_idp; });
+
   
-  var ndx = crossfilter(needs);
-
-  var locations       = xf.dimension(function(d) { return d.geo; });
-  var location_tot    = ndx.dimension(function(d) { return d.geo; });
-
-  var names           = xf.dimension(function(d) { return d.label; });
-  var names_tot       = ndx.dimension(function(d) { return d.label; });
-
-  var nameGroup = names.group().reduceSum(function(d) { return d.nb_idp; });
-  var nametotGroup = names_tot.group().reduceSum(function(d) { return d['Total des PDIs'] ; });
-
-  //difference
-  var nb_idpDim   = xf.dimension(function(d) { return +d.nb_idp; });
-  var nb_idpGroup = nb_idpDim.group().reduceSum(function(d) { return +d.nb_idp; });
-
-
-  var dateDIM     = xf.dimension(function(d){ return  dateFormat.parse(d.date) });
-  var dateGroup   = dateDIM.group().reduceSum(function(d) { return +d.nb_idp; });
-
-  
-  dateEventChart
-        .width(900)
-        .height(100)
-        .margins({top: 10, right: 30, bottom: 30, left: 35})
-        .dimension(dateDIM)
-        .group(dateGroup)   //.x(d3.time.scale())
-        .x(d3.time.scale().domain([new Date(2015, 08, 01), new Date()]))
-        .xUnits(function(){return 100;})
-        .brushOn(true)
-        .elasticY(false)
-        //.y(d3.scale.linear().domain([90, 10000]))
-        //.xAxis().ticks(5);
-        .yAxis().ticks(4).tickFormat(d3.format("d"));
-      
-      dateEventChart.renderlet(function(chart){
-          chart.selectAll("g line")
-          //.style("stroke", "#000")
-          //.ticks(d3.time.days,7)
-      });
+    dateEventChart
+          .width(900)
+          .height(100)
+          .margins({top: 10, right: 30, bottom: 30, left: 35})
+          .dimension(dateDIM)
+          .group(dateGroup)   //.x(d3.time.scale())
+          .x(d3.time.scale().domain([new Date(2015, 08, 01), new Date()]))
+          .xUnits(function(){return 100;})
+          .brushOn(true)
+          .elasticY(false)
+          //.y(d3.scale.linear().domain([90, 10000]))
+          //.xAxis().ticks(5);
+          .yAxis().ticks(4).tickFormat(d3.format("d"));
+        
+        dateEventChart.renderlet(function(chart){
+            chart.selectAll("g line")
+            //.style("stroke", "#000")
+            //.ticks(d3.time.days,7)
+        });
 
 
-var info = L.control({
-                position: 'topright'
-            }); //, shown: false }); // { position: 'bottomleft' }
+      var info = L.control({
+                      position: 'topright'
+                  }); //, shown: false }); // { position: 'bottomleft' }
 
-info.onAdd = function(map) {
+      info.onAdd = function(map) {
 
-  this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-          //this.options.shown = true;
-  this.update();
-  return this._div;
-};
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+                //this.options.shown = true;
+        this.update();
+        return this._div;
+      };
 
-info.update = function(wpaTitle) {
-      this._div.innerHTML = (wpaTitle ?
-        '<b>' + wpaTitle + '</b>' : 'Hover over a Wathab Project');
+      info.update = function(wpaTitle) {
+            this._div.innerHTML = (wpaTitle ?
+              '<b>' + wpaTitle + '</b>' : 'Hover over a Wathab Project');
 
-};
+      };
 
 
 
@@ -207,7 +217,7 @@ function updateMapPoints() {
           var lng = (latlng[2] !== "") ? latlng[2] : "0"; 
           var ssid = (latlng[3] !== "") ? latlng[3] : null; 
 
-          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(1000)*20}); // in lat-long
+          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20}); // in lat-long
 
             wpaMarker.on('mouseover',function (e) {
 
@@ -224,13 +234,14 @@ function updateMapPoints() {
           
             wpaMarker.on('click',function (e) {
               $("#data").empty();
+              $("#data").css("width","285px");
 
               var needresult = needs.filter(function(p) {
                   return p.Code_Site === ssid;
               });
-
+              $("#data").append("<br>");
               $.each( needresult[0], function( key, value ) {
-                $("#data").append(key+ " : " + value +"<hr>");
+                $("#data").append("<small>"+key+ " : " + value +"</small><hr>");
               }); 
           
           });
@@ -262,7 +273,12 @@ function updateMapPoints() {
        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
    });
 
-   var map = L.map('map',{maxZoom: 18,minZoom:12, layers: [OpenStreetMap_HOT]}).setView([4.379933,18.544533], 13);
+   var imageUrl = 'image/bangui_map.png',
+    imageBounds = [[4.5193,18.40957 ], [4.2854,18.7103]];
+
+  var offlineimage = L.imageOverlay(imageUrl, imageBounds);
+
+   var map = L.map('map',{maxZoom: 18,minZoom:12, layers: offlineimage}).fitBounds(imageBounds);
 
    wpaCluster = L.featureGroup();
    map.addLayer(wpaCluster);
@@ -276,10 +292,10 @@ function updateMapPoints() {
         updateMapPoints();
       });
   }
-
+// });
+// });
+// });
 };
-//};
-
 </script>
 
  <script src="js/bootstrap.js"></script>
