@@ -70,7 +70,7 @@
                     <h4>Nombre de PDI dans les camps de Bangui <small><a href="https://github.com/iomrowca/iomrowca.github.io/archive/master.zip">Telecharger la version OFFLINE</a></small></h4>
                     <div class="row">
                       <div id="map" class="col-md-8"></div>
-                      <div id="info">
+                      <div id="info" style="display:none">
                         <div id="data"class="col-md-3">
                           <div id='numbertot'><span><small>Total PDI : </small></span></div>
                           <div id='numbertot'><span><small>Total PDI avant sept 2015: </small></span></div>
@@ -129,7 +129,8 @@
     scsv("data/needs.csv", function(needs) {
     
     scsv("data/bangui_poi.csv", function(poi) {
- 
+
+      $("#info").css("display","block") 
     //Add the Lat and Long to the Evolution:
     data.forEach(function(occurence) {
 
@@ -315,7 +316,6 @@ function updateMapPoints() {
               //lay = map._layers[23]._layers;
               //console.log(e);
   
-
 
               //stroke_w.getNamedItem(name)
               $("#data").hide();
