@@ -3,25 +3,25 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Flow Visualization - Straight, Arrows - jsFiddle demo by pierregeo</title>
-
-
+  
+  
   <script type="text/javascript" src="src/jquery.js"></script>
-
+  
   <link rel="stylesheet" type="text/css" href="src/normalize.css">
-
-
+  
+  
   <link rel="stylesheet" type="text/css" href="Flow%20Visualization%20-%20Straight,%20Arrows%20-%20jsFiddle%20demo%20by%20pierregeo_fichiers/result-light.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-
-
+  
+    
     <script type="text/javascript" src="src/d3.js"></script>
     <script type="text/javascript" src="src/topojson.js"></script>
     <script type="text/javascript" src="src/underscore.js"></script>
     <script type="text/javascript" src="src/tipsy.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/1.5.0/d3-legend.js"></script>
-
-
-
+    
+    
+  
   <style type="text/css">
 
 /*svg {
@@ -80,18 +80,18 @@ text-shadow: 0px 0px 2px #FFF;
   left: 130px;                                                    /* NEW */
   padding: 10px;                                                  /* NEW */
   position: absolute;                                             /* NEW */
-  text-align: center;
+  text-align: center; 
 }
 .legendfleche{
   top:-120px;
   /*left:50px;*/
   height: 150px;
-  width: 300px;
+  width: 300px; 
   font-family: arial;
   font-size: 10px;
   line-height: 1;
   color: #fff;                                             /* NEW */
-  position: relative;
+  position: relative; 
    text-align: left;                                          /* NEW */
 
 }
@@ -99,21 +99,21 @@ text-shadow: 0px 0px 2px #FFF;
   top: -260px;
   left: 325px;
   height: 150px;
-  width: 300px;
+  width: 300px; 
   font-family: arial;
   font-size: 10px;
   line-height: 1;
   color: #fff;                                             /* NEW */
-  position: relative;
+  position: relative; 
   text-align: left;                                          /* NEW */
 
 }
 .sources{
   top: -260px;
   left: 325px;
-  position: relative;
+  position: relative; 
 }
-/* Creates a small triangle extender for the tooltip
+/* Creates a small triangle extender for the tooltip 
 .d3-tip:after {
   box-sizing: border-box;
   display: inline;
@@ -134,7 +134,7 @@ text-shadow: 0px 0px 2px #FFF;
 }*/
 
   </style>
-
+  
 
 
 
@@ -152,13 +152,13 @@ $(window).load(function(){
 
     // create path variable
     //var path = d3.geo.path()
-    //.projection(projection)
-
+    //.projection(projection)      
+      
 
    //var radius = 10; /* radius of circles */
     //var numCircles = 8; /* number of circles - you must update link source/target values to match changes in the number of circles */
     var d3LineLinear = d3.svg.line().interpolate("linear");
-    var d3color = d3.interpolateRgb("#3690c0","#023858"); /* color range for flow lines -- PIERRE Not that clear */
+    var d3color = d3.interpolateRgb("#3690c0","#023858"); /* color range for flow lines -- PIERRE Not that clear */ 
     //var d3color = d3.interpolateRgb("#638aa0"); /* color range for flow lines */
 
     //A LIST OF LINKS BETWEEN CIRCLES
@@ -444,7 +444,7 @@ $(window).load(function(){
     //});
 
 
-    var circles =
+    var circles = 
     [[10.3345612021697,1.70282292597074,"Equatorial Guinea","GNQ",668225],
     [2.33977009305457,9.65031728699034,"Benin","BEN",9325032],
     [8.0927348330527,9.58205759728055,"Nigeria","NGA",174507573],
@@ -471,32 +471,32 @@ $(window).load(function(){
 
 
 
-    var strength_scale =
+    var strength_scale = 
         d3.scale.linear()
         .range([2, 20]) /* thickness range for flow lines */
         .domain([1.6, d3.max(links, function(d) {
             return d.strength;
     })]);
-
-     var color_scale =
+    
+     var color_scale = 
          d3.scale.linear().range([0, 1]).domain([0, d3.max(links, function(d) {return d.strength;})]);
-
+    
     //if (d.strength<1000)
-    // var color_scale =
+    // var color_scale = 
     //     d3.scale.linear().range([0, 1]).domain([0, d3.max(links, function(d) {
     //     return d.strength;
     // })]);
+    
 
-
-
+        
     var tooltip = d3.select("#tooltop").attr("class", "d3-tip");
     var svg = d3.select("#map").append("svg").attr("width", width).attr("height", height);
-
+    
     var geo = svg.append("g").attr("class", "geo");
     var g_lines = svg.append("g").attr("class", "lines");
     var g_circles = svg.append("g").attr("class", "circles");
     var g_midpoints = svg.append("g").attr("class", "midpoints");
-
+    
 
     //SHADOW DEFINITION
     createDefs(svg.append('svg:defs'));
@@ -507,13 +507,13 @@ $(window).load(function(){
           .datum(topojson.feature(topology, topology.objects.ROWCA_COUNTRIES_2015))
           .attr("d", d3.geo.path().projection(projection));
 
-    });
+    }); 
 
 
 
 
     $.each(circles, function(i, d) {
-
+        
         if(d[3]=="GAB"||d[3]=="STP"||d[3]=="LBR"||d[3]=="SLE"||d[3]=="GNB"||d[3]=="GMB"||d[3]=="CPV"||d[3]=="COG"||d[3]=="CAR"){
             var decal_y=15
         }
@@ -537,7 +537,7 @@ $(window).load(function(){
         .attr("cx", projection(d)[0])
         .attr("cy", projection(d)[1])
         //.attr("title", d[2]+":"+d[4])
-        g_circles.append("text").attr("class", "label")
+        g_circles.append("text").attr("class", "label") 
         .text(d[3])
         .attr('x', projection(d)[0])
         .attr('y', projection(d)[1]+decal_y);
@@ -588,10 +588,10 @@ $(window).load(function(){
 
 
     function drawCurve(d) {
-
+        
 
         var slope = Math.atan2((+d3.select('#circle' + d.target).attr("cy") - d3.select('#circle' + d.source).attr("cy")), (+d3.select('#circle' + d.target).attr("cx") - d3.select('#circle' + d.source).attr("cx")));
-
+        
         var slopePlus90 = Math.atan2((+d3.select('#circle' + d.target).attr("cy") - d3.select('#circle' + d.source).attr("cy")), (+d3.select('#circle' + d.target).attr("cx") - d3.select('#circle' + d.source).attr("cx"))) + (Math.PI / 2);
 
         var sourceX = +d3.select('#circle' + d.source).attr("cx");
@@ -600,28 +600,28 @@ $(window).load(function(){
         var targetY = +d3.select('#circle' + d.target).attr("cy");
         var radiusX = +d3.select('#circle' + d.source).attr("r")+2;
         var radiusY = +d3.select('#circle' + d.target).attr("r")+2;
-
+        
         var radius = 0;
 
         console.log(d)
         //TODO RADIUS X RADIUS Y + CLASSIF POUR LES FLECHES
         var arrowOffset = 14;
-
+        
         var points = [];
-
+        
         //Less than 10 000
         if(d.strength<0.1){
 
             points.push([sourceX + radiusX * Math.cos(slope) - strength_scale(0.2) * Math.cos(slopePlus90), sourceY + radiusX * Math.sin(slope) - strength_scale(0.2) * Math.sin(slopePlus90)]);
-
+            
             points.push([sourceX + radiusX* Math.cos(slope) , sourceY + radiusX * Math.sin(slope) ]);
-
+            
             points.push([targetX - radiusY * Math.cos(slope), targetY - radiusY * Math.sin(slope)]);
-
+            
             points.push([targetX - (radiusY) * Math.cos(slope) - strength_scale(0.2) * Math.cos(slopePlus90), targetY - radiusY  * Math.sin(slope) - strength_scale(0.2 ) * Math.sin(slopePlus90)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(0.2) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(0.2) * Math.sin(slopePlus90)]);
-
+            
             return d3LineLinear(points) + "Z";
         }
 
@@ -629,15 +629,15 @@ $(window).load(function(){
         if(d.strength<0.5&&d.strength>0.1){
 
             points.push([sourceX + radiusX * Math.cos(slope) - strength_scale(2) * Math.cos(slopePlus90), sourceY + radiusX * Math.sin(slope) - strength_scale(2) * Math.sin(slopePlus90)]);
-
+            
             points.push([sourceX + radiusX* Math.cos(slope) , sourceY + radiusX * Math.sin(slope) ]);
-
+            
             points.push([targetX - radiusY * Math.cos(slope), targetY - radiusY * Math.sin(slope)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(2 + (arrowOffset / 2)) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(2 + (arrowOffset / 2)) * Math.sin(slopePlus90)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(2) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(2) * Math.sin(slopePlus90)]);
-
+            
             return d3LineLinear(points) + "Z";
 
         }
@@ -646,15 +646,15 @@ $(window).load(function(){
         if(d.strength<1&&d.strength>0.5){
 
             points.push([sourceX + radiusX * Math.cos(slope) - strength_scale(4) * Math.cos(slopePlus90), sourceY + radiusX * Math.sin(slope) - strength_scale(4) * Math.sin(slopePlus90)]);
-
+            
             points.push([sourceX + radiusX* Math.cos(slope) , sourceY + radiusX * Math.sin(slope) ]);
-
+            
             points.push([targetX - radiusY * Math.cos(slope), targetY - radiusY * Math.sin(slope)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(4 + (arrowOffset / 2)) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(4 + (arrowOffset / 2)) * Math.sin(slopePlus90)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(4) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(4) * Math.sin(slopePlus90)]);
-
+            
             return d3LineLinear(points) + "Z";
 
         }
@@ -663,15 +663,15 @@ $(window).load(function(){
         if(d.strength>1&&d.strength<10){
 
             points.push([sourceX + radiusX * Math.cos(slope) - strength_scale(7) * Math.cos(slopePlus90), sourceY + radiusX * Math.sin(slope) - strength_scale(7) * Math.sin(slopePlus90)]);
-
+            
             points.push([sourceX + radiusX* Math.cos(slope) , sourceY + radiusX * Math.sin(slope) ]);
-
+            
             points.push([targetX - radiusY * Math.cos(slope), targetY - radiusY * Math.sin(slope)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(7 + (arrowOffset / 2)) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(7 + (arrowOffset / 2)) * Math.sin(slopePlus90)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(7) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(7) * Math.sin(slopePlus90)]);
-
+            
             return d3LineLinear(points) + "Z";
 
         }
@@ -680,17 +680,17 @@ $(window).load(function(){
         if(d.strength>10){
 
             points.push([sourceX + radiusX* Math.cos(slope) - strength_scale(20) * Math.cos(slopePlus90), sourceY + radiusX * Math.sin(slope) - strength_scale(20) * Math.sin(slopePlus90)]);
-
+            
             points.push([sourceX + radiusX* Math.cos(slope) , sourceY + radiusX * Math.sin(slope) ]);
 
             //points.push([sourceX - radiusX * Math.cos(slope), sourceY - radiusX * Math.sin(slope) ]);
-
+            
             points.push([targetX - radiusY * Math.cos(slope), targetY - radiusY * Math.sin(slope)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(20 + (arrowOffset / 2)) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(20 + (arrowOffset / 2)) * Math.sin(slopePlus90)]);
-
+            
             points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(20) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(20) * Math.sin(slopePlus90)]);
-
+            
             return d3LineLinear(points) + "Z";
 
         }
@@ -698,25 +698,25 @@ $(window).load(function(){
     }
 
             // points.push([sourceX + radiusX * Math.cos(slope) - strength_scale(d.strength) * Math.cos(slopePlus90), sourceY + radiusX * Math.sin(slope) - strength_scale(d.strength) * Math.sin(slopePlus90)]);
-
+            
             // points.push([sourceX - radius * Math.cos(slope), sourceY - radius * Math.sin(slope)]);
-
+            
             // points.push([targetX - radiusY * Math.cos(slope), targetY - radiusY * Math.sin(slope)]);
-
+            
             // points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(d.strength + (arrowOffset / 2)) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(d.strength + (arrowOffset / 2)) * Math.sin(slopePlus90)]);
-
+            
             // points.push([targetX - (radiusY + arrowOffset) * Math.cos(slope) - strength_scale(d.strength) * Math.cos(slopePlus90), targetY - (radiusY + arrowOffset) * Math.sin(slope) - strength_scale(d.strength) * Math.sin(slopePlus90)]);
-
+            
             // return d3LineLinear(points) + "Z";
 })();
-});//]]>
+});//]]> 
 
 </script>
 
 </head>
 <body>
-    <div class="container">
-        <div id="title"><h2>DRAFT _ Internal Migrations in the West and Central Africa</h2><br></div>
+    <div class="container">    
+        <div id="title"><h2>Internal Migrations in West and Central Africa</h2><br></div>
         <div id="tooltop"></div>
         <div id="map"></div>
         <div class="row">
@@ -752,7 +752,7 @@ $(window).load(function(){
                     <text transform="matrix(1 0 0 1 122.3 145)" fill="#010101" font-family="'MyriadPro-Regular'" font-size="12">1,500,000</text>
                 </svg>
             </div>
-            <div class="col-md-2" style="top:34px;left:90px"><p style="font-size:10px">Sources:UNPOP</p></div>
+            <div class="col-md-4" style="top:10px;left:90px"><p style="font-size:10px">Sources: United Nations, Department of Economic and Social Affairs (2013). Trends in International Migrant Stock: Migrants by Destination and Origin (United Nations database, POP/DB/MIG/Stock/Rev.2013).</p></div>
         </div>
     </div>
 
