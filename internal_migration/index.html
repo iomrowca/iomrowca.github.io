@@ -11,7 +11,7 @@
   
   
   <link rel="stylesheet" type="text/css" href="Flow%20Visualization%20-%20Straight,%20Arrows%20-%20jsFiddle%20demo%20by%20pierregeo_fichiers/result-light.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
   
     
     <script type="text/javascript" src="src/d3.js"></script>
@@ -28,6 +28,30 @@
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdCAMAAACKeiw+AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////9fb3h/JDwQAAABtJREFUeNpiYMQLGBgZ8IJR6VHpUWnKpAECDACcGgA72QxfPgAAAABJRU5ErkJggg==);
   border: solid 1px #ddd;
 }*/
+
+#legendfleche {
+    top:-100px;
+  }
+  #legendcercle {
+   top:-98px;
+  }
+  #sources {
+    top:-30px;
+  }
+
+@media (max-width:992px){
+  #legendfleche {
+    top:-250px;
+  }
+  #legendcercle {
+   top:-250px;
+  }
+  #sources {
+    top:-340px;
+    left:200px;
+  }
+}
+
 svg .circle {
   fill: #FFF;
   stroke-width: 1;
@@ -82,38 +106,7 @@ text-shadow: 0px 0px 2px #FFF;
   position: absolute;                                             /* NEW */
   text-align: center; 
 }
-.legendfleche{
-  top:-120px;
-  /*left:50px;*/
-  height: 150px;
-  width: 300px; 
-  font-family: arial;
-  font-size: 10px;
-  line-height: 1;
-  color: #fff;                                             /* NEW */
-  position: relative; 
-   text-align: left;                                          /* NEW */
 
-}
-.legendcercle{
-  top: -260px;
-  left: 325px;
-  height: 150px;
-  width: 300px; 
-  font-family: arial;
-  font-size: 10px;
-  line-height: 1;
-  color: #fff;                                             /* NEW */
-  position: relative; 
-  text-align: left;                                          /* NEW */
-
-}
-.sources{
-  top: -260px;
-  left: 325px;
-  position: relative; 
-}
-/* Creates a small triangle extender for the tooltip 
 .d3-tip:after {
   box-sizing: border-box;
   display: inline;
@@ -715,12 +708,12 @@ $(window).load(function(){
 
 </head>
 <body>
-    <div class="container">    
+    <div class="container" style="width:1000px">    
         <div id="title"><h2>Internal Migrations in West and Central Africa</h2><br></div>
         <div id="tooltop"></div>
         <div id="map"></div>
         <div class="row">
-            <div class="col-md-3" style="top:-100px">
+            <div class="col-md-3" id="legendfleche">
                 <svg version="1.0">
                 <g>
                     <text transform="matrix(1 0 0 1 130 50.5964)" fill="#010101" font-family="'ArialMT'" font-size="12">less than 10,000</text>
@@ -738,7 +731,7 @@ $(window).load(function(){
                 <text transform="matrix(1 0 0 1 65 22.2631)" fill="#010101" font-family="'ArialMT'" font-size="14">Number of migrants in 2013</text>
                 </svg>
             </div>
-            <div class="col-md-4" style="top:-98px">
+            <div class="col-md-6" id="legendcercle">
                 <svg>
                     <text transform="matrix(1 0 0 1 65 40.2631)" fill="#010101" font-family="'ArialMT'" font-size="12">Country population in 2011</text>
                     <circle id="circle2_1_" fill="#FFFFFF" stroke="#676767" stroke-miterlimit="10" cx="48.2" cy="105.7" r="41.8"></circle>
@@ -752,7 +745,7 @@ $(window).load(function(){
                     <text transform="matrix(1 0 0 1 122.3 145)" fill="#010101" font-family="'MyriadPro-Regular'" font-size="12">1,500,000</text>
                 </svg>
             </div>
-            <div class="col-md-4" style="top:10px;left:90px"><p style="font-size:10px">Sources: United Nations, Department of Economic and Social Affairs (2013). Trends in International Migrant Stock: Migrants by Destination and Origin (United Nations database, POP/DB/MIG/Stock/Rev.2013).</p></div>
+            <div class="col-md-4" id="sources" style="width:200px"><p style="font-size:10px">Sources: United Nations, Department of Economic and Social Affairs (2013). Trends in International Migrant Stock: Migrants by Destination and Origin (United Nations database, POP/DB/MIG/Stock/Rev.2013).</p></div>
         </div>
     </div>
 
