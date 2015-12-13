@@ -26,14 +26,15 @@
         overflow-y: auto;
 
       }
+
       #infosite{
         width:270px;
         height:600px;
         color:white;
         background-color: #3d3d3d;
         overflow-y: auto;
-
       }
+
       #headerbox{
         height: 30px;
         background-color: #3d3d3d;
@@ -58,6 +59,8 @@
         stroke: #3d3d3d;
         shape-rendering: crispedges;
     }
+
+
     </style>
 
 </head>
@@ -122,6 +125,7 @@
   //   needss=datag.Needs;
     //needs=needss.elements;
 
+  //scsv = d3.dsv(';', "text/csv; charset=ISO-8859-1");
   scsv = d3.dsv(';', "text/csv; charset=ISO-8859-1");
 
     scsv("data/car_diff_modif.csv", function(data) {
@@ -133,6 +137,8 @@
       $("#info").css("display","block") 
     //Add the Lat and Long to the Evolution:
     data.forEach(function(occurence) {
+
+
 
       //Join the values with the SSID
       var result = poi.filter(function(p) {
@@ -151,13 +157,25 @@
     needs.forEach(function(need_camp) {
       //Join the values with the SSID
       //TODO Clean the SSID in the google sheet 
+      var chaincheck = need_camp.Tendency,
+      dimi="Diminution",
+      aug ="Augmentation",
+      sta ="Stable"
+      if(chaincheck.indexOf(dimi) > -1){need_camp.Evolution="Diminution"}
+      else if(chaincheck.indexOf(aug) > -1){need_camp.Evolution="Augmentation"}
+      else if(chaincheck.indexOf(sta) > -1){need_camp.Evolution="Stable"}
+      else{need_camp.Evolution="Autre"}
+      //else{need_camp.Tendency="Other"}
+
       var resjoin = poi.filter(function(p) {
         return p.SSID === need_camp.Code_Site;
       });
+
+      need_camp.blink = (need_camp["En evidence"] == "oui") ? "oui" : null;
       need_camp.lat = (resjoin[0] !== undefined) ? resjoin[0].lat : null;
       need_camp.lng = (resjoin[0] !== undefined) ? resjoin[0].long : null;
       need_camp.geo =  (resjoin[0] !== undefined) ? resjoin[0].lat +","+resjoin[0].long : null;
-      need_camp.label =  (resjoin[0] !== undefined) ? resjoin[0].Name+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].SSID+","+need_camp['Total des PDIs'] : "Unknow,0,0,Unknow,Unknow";
+      need_camp.label =  (resjoin[0] !== undefined) ? resjoin[0].Name+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].SSID+","+need_camp['Total des PDIs']+","+need_camp.blink : "Unknow,0,0,Unknow,Unknow";
     });
 
 
@@ -208,10 +226,9 @@
 
     numbertot.group(totalidp_DimGroup).valueAccessor(total_Dim).formatNumber(d3.format(",.0f"));
 
-    console.log(needs)
     //EVOLUTION
     
-    var evolutionDim   = ndx.dimension(function(d) { return d.Tendency; });
+    var evolutionDim   = ndx.dimension(function(d) { return d.Evolution; });
     var evolutiongroup = evolutionDim.group();
 
     evolutionChart
@@ -249,8 +266,8 @@
 
 
       var info = L.control({
-                      position: 'topright'
-                  }); //, shown: false }); // { position: 'bottomleft' }
+        position: 'topright'
+      }); //, shown: false }); // { position: 'bottomleft' }
 
       info.onAdd = function(map) {
 
@@ -277,15 +294,22 @@ function resetColors() {
 
 
 function updateMapPoints() {
+
+
+
+
         
         wpaCluster.clearLayers();
         
-        if (!map.hasLayer(wpaCluster)) return;
-        map.removeLayer(wpaCluster);
+        //if (map.hasLayer(wpaCluster)) {wpaCluster.clearLayers()};
+        //map.removeLayer(wpaCluster);$(".eq-svg").remove()
         
+
         var markerList = [];
 
         nametotGroup.top(Infinity).forEach(function(p) {
+
+
 
           var latlng = p.key.split(",");
 
@@ -293,8 +317,19 @@ function updateMapPoints() {
           var lat = (latlng[1] !== "") ? latlng[1] : "0"; 
           var lng = (latlng[2] !== "") ? latlng[2] : "0"; 
           var ssid = (latlng[3] !== "") ? latlng[3] : null; 
+          var blink = (latlng[5]!=="") ? latlng[5] : null;
+          //var radius = Math.sqrt(p.value)/Math.sqrt(2000)*20;
 
-          var wpaMarker = L.circleMarker([lat,lng], { fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20}); // in lat-long
+        console.log(latlng)
+
+          //var wpaMarker = L.marker([lat,lng], {icon: svgIcon});
+
+          if(blink=="oui"){
+            var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"Bra"}); // in lat-long
+          }
+          else if (blink !=="oui")
+          var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
+
 
             wpaMarker.on('mouseover',function (e) {
 
@@ -325,7 +360,7 @@ function updateMapPoints() {
               var needresult = needs.filter(function(p) {
                   return p.Code_Site === ssid;
               });
-              $("#info").append("<div id='infosite'class='col-md-3'><div id ='headerbox'><svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'viewBox='-79 24.3 312 76' enable-background='new -79 24.3 312 76' xml:space='preserve'><g><g><g><path d='M193.5,82.5c-11.2,0-20.2-9.1-20.2-20.2s9.1-20.2,20.2-20.2c11.2,0,20.2,9.1,20.2,20.2S204.7,82.5,193.5,82.5z M193.5,46.5c-8.7,0-15.7,7.1-15.7,15.7S184.8,78,193.5,78c8.7,0,15.7-7.1,15.7-15.7S202.2,46.5,193.5,46.5z'/></g><polygon points='204.1,54.9 200.9,51.7 193.5,59.1 186.1,51.7 182.9,54.9 190.3,62.3 182.9,69.7 186.1,72.9 193.5,65.5 200.9,72.9 204.1,69.7 196.7,62.3'/></g></g></svg></div><br></div>");
+              $("#info").append("<div id='infosite'class='col-md-3'><div id ='headerbox'><svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'viewBox='-79 24.3 312 76' enable-background='new -79 24.3 312 76' xml:space='preserve'><g><g><g><path fill='#ffffff' d='M193.5,82.5c-11.2,0-20.2-9.1-20.2-20.2s9.1-20.2,20.2-20.2c11.2,0,20.2,9.1,20.2,20.2S204.7,82.5,193.5,82.5z M193.5,46.5c-8.7,0-15.7,7.1-15.7,15.7S184.8,78,193.5,78c8.7,0,15.7-7.1,15.7-15.7S202.2,46.5,193.5,46.5z'/></g><polygon fill='#ffffff' points='204.1,54.9 200.9,51.7 193.5,59.1 186.1,51.7 182.9,54.9 190.3,62.3 182.9,69.7 186.1,72.9 193.5,65.5 200.9,72.9 204.1,69.7 196.7,62.3'/></g></g></svg></div><br></div>");
               $.each( needresult[0], function( key, value ) {
                 $("#infosite").append("<small>"+key+ " : " + value +"</small><hr>");
               }); 
@@ -362,6 +397,8 @@ function updateMapPoints() {
 
   dc.renderAll();
 
+
+
    var OpenStreetMap_HOT = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
        maxZoom: 19,
        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
@@ -386,6 +423,28 @@ function updateMapPoints() {
         updateMapPoints();
       });
   }
+
+
+  
+blink1 = {"done":"yes"};
+
+  function move(){
+
+    if (blink1.done == "yes"){
+
+            d3.selectAll(".Bra").transition().duration(500).attr("stroke-width",1);//.attr("stroke-opacity", i)
+            blink1.done = "no"
+      }
+    else if (blink1.done == "no"){
+
+          d3.selectAll(".Bra").transition().duration(500).attr("stroke-width",3);//.attr("stroke-opacity", i)
+          blink1.done = "yes"
+    }
+  };
+
+setInterval(move,500)
+
+
 });
 });
 });
