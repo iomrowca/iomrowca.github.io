@@ -54,15 +54,48 @@ Legende: Photo4
 )
 Legende: Photo5
 
-#Exporting your story
+#Niger
 ```
 - center: [40.4469,-28.5645]
 - zoom: 5
 ```
+![Niger](http://iomrowca.github.io/odysseus/niger/001.jpg
+)
+Legende: Photo1
+![Niger](http://iomrowca.github.io/odysseus/niger/002.jpg
+)
+Legende: Photo2
+![Niger](http://iomrowca.github.io/odysseus/niger/003.jpg
+)
+Legende: Photo3
+![Niger](http://iomrowca.github.io/odysseus/niger/004.jpg
+)
+Legende: Photo4
+![Niger](http://iomrowca.github.io/odysseus/niger/005.jpg
+)
+Legende: Photo5
 
-You have different options for exporting your odyssey.js visualization. You can either embed this using an iframe, publishing with a click on bl.ocks or just share the URL of this visualization.
+#Libya
+```
+- center: [40.4469,-28.5645]
+- zoom: 5
+```
+![Niger](http://iomrowca.github.io/odysseus/libya/001.jpg
+)
+Legende: Photo1
+![Niger](http://iomrowca.github.io/odysseus/libya/002.jpg
+)
+Legende: Photo2
+![Niger](http://iomrowca.github.io/odysseus/libya/003.jpg
+)
+Legende: Photo3
+![Niger](http://iomrowca.github.io/odysseus/libya/004.jpg
+)
+Legende: Photo4
+![Niger](http://iomrowca.github.io/odysseus/libya/005.jpg
+)
+Legende: Photo5
 
-If you want to customize it further, you can download the generated source code by clicking on the button below.
 
 #Advanced users
 
