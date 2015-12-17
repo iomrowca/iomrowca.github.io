@@ -1,12 +1,12 @@
 ```
--title: "Odyssey example FTW"
--author: "CartoDB"
+-title: "Odysseus 2.0."
+-author: "OIM"
 ```
 
 #Odysseus 2.0.
 ```
 - center: [14.0854725,-15.8418301]
-- zoom: 5
+- zoom: 7
 ```
 
 Présenté par L'Organisation Internationale pour les Migration (OIM) au Sénégal
@@ -35,7 +35,7 @@ Legende: Photo5
 
 #Burkina Faso
 ```
-- center: [40.4469,-28.5645]
+- center: [14.0854725,-15.8418301]
 - zoom: 5
 ```
 ![BF](http://iomrowca.github.io/odysseus/burkina/001.jpg
@@ -122,27 +122,20 @@ Legende: Photo5
 - center: [40.4469,-28.5645]
 - zoom: 5
 ```
-![Niger](http://iomrowca.github.io/odysseus/libya/001.jpg
+![Niger](http://iomrowca.github.io/odysseus/lampedusa/001.jpg
 )
 Legende: Photo1
-![Niger](http://iomrowca.github.io/odysseus/libya/002.jpg
+![Niger](http://iomrowca.github.io/odysseus/lampedusa/002.jpg
 )
 Legende: Photo2
-![Niger](http://iomrowca.github.io/odysseus/libya/003.jpg
+![Niger](http://iomrowca.github.io/odysseus/lampedusa/003.jpg
 )
 Legende: Photo3
-![Niger](http://iomrowca.github.io/odysseus/libya/004.jpg
+![Niger](http://iomrowca.github.io/odysseus/lampedusa/004.jpg
 )
 Legende: Photo4
-![Niger](http://iomrowca.github.io/odysseus/libya/005.jpg
+![Niger](http://iomrowca.github.io/odysseus/lampedusa/005.jpg
 )
 Legende: Photo5
 
 
-#Advanced users
-
-Check out our [documentation](/odyssey.js/documentation/) to learn how to use odyssey to create more custom things. It's crazy the amount of cool things that can be done with the library.
-
-Also if you are a developer, take a look at our contributing guideline so you can push code to the actual library.
-
-Cheers!
