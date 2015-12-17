@@ -54,6 +54,27 @@ Legende: Photo4
 )
 Legende: Photo5
 
+#Mali
+```
+- center: [40.4469,-28.5645]
+- zoom: 5
+```
+![BF](http://iomrowca.github.io/odysseus/mali/001.jpg
+)
+Legende: Photo1
+![BF](http://iomrowca.github.io/odysseus/mali/002.jpg
+)
+Legende: Photo2
+![BF](http://iomrowca.github.io/odysseus/mali/003.jpg
+)
+Legende: Photo3
+![BF](http://iomrowca.github.io/odysseus/mali/004.jpg
+)
+Legende: Photo4
+![BF](http://iomrowca.github.io/odysseus/mali/005.jpg
+)
+Legende: Photo5
+
 #Niger
 ```
 - center: [40.4469,-28.5645]
@@ -76,6 +97,27 @@ Legende: Photo4
 Legende: Photo5
 
 #Libya
+```
+- center: [40.4469,-28.5645]
+- zoom: 5
+```
+![Niger](http://iomrowca.github.io/odysseus/libya/001.jpg
+)
+Legende: Photo1
+![Niger](http://iomrowca.github.io/odysseus/libya/002.jpg
+)
+Legende: Photo2
+![Niger](http://iomrowca.github.io/odysseus/libya/003.jpg
+)
+Legende: Photo3
+![Niger](http://iomrowca.github.io/odysseus/libya/004.jpg
+)
+Legende: Photo4
+![Niger](http://iomrowca.github.io/odysseus/libya/005.jpg
+)
+Legende: Photo5
+
+#Lampedusa
 ```
 - center: [40.4469,-28.5645]
 - zoom: 5
