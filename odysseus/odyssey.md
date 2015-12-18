@@ -6,8 +6,8 @@
 
 #Odysseus 2.0.
 ```
-- center: [14.7487651,-17.4588836]
-- zoom: 5
+- center: [31.1093296,10.4890159]
+- zoom: 3
 ```
 
 Présenté par L'Organisation Internationale pour les Migration (OIM) au Sénégal
@@ -99,7 +99,7 @@ Legende: Photo5
 
 #Libya
 ```
-- center: [40.4469,-28.5645]
+- center: [28.8978428,16.8048838]
 - zoom: 5
 ```
 ![Niger](http://iomrowca.github.io/odysseus/libya/001.jpg
@@ -120,8 +120,8 @@ Legende: Photo5
 
 #Lampedusa
 ```
-- center: [40.4469,-28.5645]
-- zoom: 5
+- center: [35.5117229,12.5745143]
+- zoom: 7
 ```
 ![Niger](http://iomrowca.github.io/odysseus/lampedusa/001.jpg
 )
