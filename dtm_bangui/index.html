@@ -21,8 +21,8 @@
       #data {
         width:270px;
         height:600px;
-        color:white;
-        background-color: #3d3d3d;
+        color:black;
+        /*background-color: #3d3d3d;*/
         overflow-y: auto;
 
       }
@@ -30,14 +30,14 @@
       #infosite{
         width:270px;
         height:600px;
-        color:white;
-        background-color: #3d3d3d;
+        color:black;
+        /*background-color: #3d3d3d;*/
         overflow-y: auto;
       }
 
       #headerbox{
         height: 30px;
-        background-color: #3d3d3d;
+        
       }
       /*  a{
         color:#C0392B;
@@ -50,16 +50,15 @@
       }
       .dc-chart .grid-line {
         fill: none;
-        stroke: #3d3d3d;
+        stroke: #ffffff;
         opacity: 0.5;
         shape-rendering: crispedges;
       }
       .dc-chart .axis path, .axis line {
         fill: none;
-        stroke: #3d3d3d;
+        stroke: #ffffff;
         shape-rendering: crispedges;
     }
-
 
 
   .legend{
@@ -82,7 +81,7 @@
   }
   .legendCircle {
        border-radius:50%; 
-       border: 1px solid #C0392B; 
+       border: 1px solid #3d3d3d; 
        background: rgba(255, 255, 255, 0);
      display: inline-block;
   }
@@ -100,26 +99,26 @@
 
 <body>
     <div class="container">
-      <p id="title"><h3><span style="color:#C0392B">DRAFT</span> - Suivi Bangui DTM </h3></p>
+      <p id="title"><h3><span style="color:#C0392B">DRAFT  </span><img src="image/logos.png" height=40 align="bottom"></h3></p>
                 <div >
-                    <h4>Suivi des personnes déplacées à Bangui <small><a href="https://github.com/iomrowca/dtm_bangui/archive/master.zip">Telecharger la version OFFLINE</a></small></h4>
+                    <h4>Suivi des personnes déplacées internes (PDI) à Bangui <small><a href="https://github.com/iomrowca/dtm_bangui/archive/master.zip">Telecharger la version OFFLINE de la carte</a></small></h4>
                     <div class="row">
                       <div id="map" class="col-md-2"></div>
                       <div id="info" style="display:none">
                         <div id="data"class="col-md-3">
                           <div id='numbertot'><span><small>Total PDI : </small></span></div>
-                          <div id='numbertot'><span><small>Total PDI avant sept 2015: </small></span></div>
-                          <div id='numbertot'><span><small>Total PDI après sept 2015: </small></span></div>
+                          <div id='numbertot_bfsept'><span><small>Total PDI avant sept 2015: </small></span></div>
+                          <div id='numbertot_afsept'><span><small>Total PDI après sept 2015: </small></span></div>
                           <hr><br>
                           <span><small>Tendance </small></span><span id ="reset"><small><a>(Reset)</a></small></span><div id='evolution'></div>
+                          <hr><span style="font-style:italic"><small>Les sites mis en évidence sur la carte par un clignotement requierent votre particulière attention</small></span>
                         </div>
                       </div>
                     </div>
                     <!--<div id="timeline"><h4><span class="filter"></span></h4></div>-->
                 </div>
-
-        <br><br>
-        <!--<div id="reachbar"><a href="http://www.reach-initiative.org/"><img src="img/reach.jpg" style="background-color:#fff;border:none;height:40px" /></a></div>-->
+        <br>
+        <br>
         <br>
         
     </div>
@@ -157,7 +156,8 @@
   //   needss=datag.Needs;
     //needs=needss.elements;
 
-  //scsv = d3.dsv(';', "text/csv; charset=ISO-8859-1");
+$("#data").prepend("<br><small>Cliquer sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
+
   scsv = d3.dsv(';', "text/plain; charset=ISO-8859-1");
 
     scsv("data/needs.csv", function(needs) {
@@ -189,12 +189,15 @@
       need_camp.lat = (resjoin[0] !== undefined) ? resjoin[0].lat : null;
       need_camp.lng = (resjoin[0] !== undefined) ? resjoin[0].long : null;
       need_camp.geo =  (resjoin[0] !== undefined) ? resjoin[0].lat +","+resjoin[0].long : null;
-      need_camp.label =  (resjoin[0] !== undefined) ? resjoin[0]["Site_Name"]+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].Code_Site+","+need_camp['Total des PDIs']+","+need_camp["En evidence"] : "Unknow,0,0,Unknow,Unknow,Unknow";
-      console.log(need_camp.label)
+      need_camp.label =  (resjoin[0] !== undefined) ? resjoin[0]["Site_Name"]+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].Code_Site+","+need_camp['Total des PDIs']+","+need_camp["En evidence"]+","+need_camp.Evolution : "Unknow,0,0,Unknow,Unknow,Unknow,Unknow";
+      
+
     });
     
 
     numbertot       = dc.numberDisplay("#numbertot");
+    numbertot_bfsept = dc.numberDisplay("#numbertot_bfsept");
+    numbertot_afsept = dc.numberDisplay("#numbertot_afsept");
     evolutionChart  = dc.rowChart("#evolution");
 
 
@@ -205,30 +208,26 @@
     var ndx = crossfilter(needs);
 
     var location_tot    = ndx.dimension(function(d) { return d.geo; });
-
-
     var names_tot       = ndx.dimension(function(d) { return d.label; });
-
     var idp =  ndx.dimension(function(d) { return d['Total des PDIs'] });
-
     var nametotGroup = names_tot.group().reduceSum(function(d) { return d['Total des PDIs'] ; });
 
 
-
-        //console.log(data)
-    $("#data").prepend("<br><small>Cliquer sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
+    
     
     totalidp_DimGroup = ndx.groupAll().reduce(function (p, v) { ++p.n;p.tot += +v['Total des PDIs'] ; return p;},function (p, v) {--p.n;p.tot -= +v['Total des PDIs'] ;return p;},function () { return {n:0,tot:0}; });
     
     totalidpavtspet_DimGroup = ndx.groupAll().reduce(function (p, v) { ++p.n;p.tot += +v['Nombre de Population avant la crise du 26 Septembre 2015'] ; return p;},function (p, v) {--p.n;p.tot -= +v['Nombre de Population avant la crise du 26 Septembre 2015'] ;return p;},function () { return {n:0,tot:0}; });
 
+    totalidpaprspet_DimGroup = ndx.groupAll().reduce(function (p, v) { ++p.n;p.tot += +v['Nombres des PDIs ajouté aprèss la crise'] ; return p;},function (p, v) {--p.n;p.tot -= +v['Nombres des PDIs ajouté aprèss la crise'] ;return p;},function () { return {n:0,tot:0}; });
     //Nombres des PDIs ajouté aprèss la crise
 
     var total_Dim = function(d) { return +d.tot};
     var total_sites = function(d) { return +d.n};
 
     numbertot.group(totalidp_DimGroup).valueAccessor(total_Dim).formatNumber(d3.format(",.0f"));
-
+    numbertot_bfsept.group(totalidpavtspet_DimGroup).valueAccessor(total_Dim).formatNumber(d3.format(",.0f"));
+    numbertot_afsept.group(totalidpaprspet_DimGroup).valueAccessor(total_Dim).formatNumber(d3.format(",.0f"));
     //EVOLUTION
     
     var evolutionDim   = ndx.dimension(function(d) { return d.Evolution; });
@@ -236,14 +235,19 @@
 
     evolutionChart
           .width(235)
-          .height(350)
+          .height(270)
           .margins({top: 10, right: 0, bottom: 0, left: 0})
           .dimension(evolutionDim)
           .group(evolutiongroup)   //.x(d3.time.scale())
-
+          .colors(['#d7191c','#636363','#33a02c','#1f78b4'])
+          .label(function (d) {
+            var label = d.key + " : "+d.value + " sites";
+            return label;
+          })
+    
         evolutionChart.renderlet(function(chart){
-            chart.selectAll("g line")
-            //.style("stroke", "#000")
+            //chart.selectAll("text")
+            //.style("fill", "#000")
             //.ticks(d3.time.days,7)
         });
 
@@ -283,8 +287,6 @@ function updateMapPoints() {
         
         wpaCluster.clearLayers();
         
-        //if (map.hasLayer(wpaCluster)) {wpaCluster.clearLayers()};
-        //map.removeLayer(wpaCluster);$(".eq-svg").remove()
         
 
         var markerList = [];
@@ -300,21 +302,50 @@ function updateMapPoints() {
           var ssid = (latlng[3] !== "") ? latlng[3] : null; 
           var ndidp = (latlng[4] !== "") ? latlng[4] : null; 
           var blink = (latlng[5]!=="") ? latlng[5] : null;
-          //var radius = Math.sqrt(p.value)/Math.sqrt(2000)*20;
-
-          //var wpaMarker = L.marker([lat,lng], {icon: svgIcon});
+          var tend = (latlng[6]!=="") ? latlng[6] : null;
+          
 
           if(blink=="oui"){
-            var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"Bra"}); // in lat-long
+            if(tend=="Augmentation"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#d7191c",color:"#d7191c",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"Bra"}); // in lat-long
+            }
+            else if (tend =="Diminution"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#33a02c",color:"#33a02c",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"Bra"}); // in lat-long
+            }
+            else if (tend =="Autre"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#636363",color:"#636363",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"Bra"}); // in lat-long
+            }
+            else if (tend =="Stable"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#1f78b4",color:"#1f78b4",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"Bra"}); // in lat-long
+            }
           }
-          else if (blink !=="oui")
-          var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#ECF0F1",color:"#C0392B",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
 
+          else if (blink !=="oui"){
+          
+            if(tend=="Augmentation"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#d7191c",color:"#d7191c",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
+            }
+            else if (tend =="Diminution"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#33a02c",color:"#33a02c",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
+            }
+            else if (tend =="Autre"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#636363",color:"#636363",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
+            }
+            else if (tend =="Stable"){
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#1f78b4",color:"#1f78b4",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
+            }
+
+            else if (tend !=="Augmentation"||tend !=="Diminution"||tend !=="Autre"||tend !=="Stable")
+              {
+              var wpaMarker = L.circleMarker([lat,lng], { weight:1,opacity:0.7,fillColor: "#1f78b4",color:"#1f78b4",radius: Math.sqrt(p.value)/Math.sqrt(2000)*20,className:"no-Bra"}); // in lat-long
+            }
+
+          }
 
             wpaMarker.on('mouseover',function (e) {
 
               info.addTo(map);
-              info.update(name + " : "+ p.value);
+              info.update(name + " : "+ p.value +" PDI");
               
             });
           
@@ -345,7 +376,7 @@ function updateMapPoints() {
 
               console.log(needresult)
 
-              $("#info").append("<div id='infosite'class='col-md-3'><div id ='headerbox'><svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'viewBox='-79 24.3 312 76' enable-background='new -79 24.3 312 76' xml:space='preserve'><g><g><g><path fill='#ffffff' d='M193.5,82.5c-11.2,0-20.2-9.1-20.2-20.2s9.1-20.2,20.2-20.2c11.2,0,20.2,9.1,20.2,20.2S204.7,82.5,193.5,82.5z M193.5,46.5c-8.7,0-15.7,7.1-15.7,15.7S184.8,78,193.5,78c8.7,0,15.7-7.1,15.7-15.7S202.2,46.5,193.5,46.5z'/></g><polygon fill='#ffffff' points='204.1,54.9 200.9,51.7 193.5,59.1 186.1,51.7 182.9,54.9 190.3,62.3 182.9,69.7 186.1,72.9 193.5,65.5 200.9,72.9 204.1,69.7 196.7,62.3'/></g></g></svg></div><div id='profile_url'></div></div>");
+              $("#info").append("<div id='infosite'class='col-md-3'><div id ='headerbox'><svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'viewBox='-79 24.3 312 76' enable-background='new -79 24.3 312 76' xml:space='preserve'><g><g><g><path fill='#3d3d3d' d='M193.5,82.5c-11.2,0-20.2-9.1-20.2-20.2s9.1-20.2,20.2-20.2c11.2,0,20.2,9.1,20.2,20.2S204.7,82.5,193.5,82.5z M193.5,46.5c-8.7,0-15.7,7.1-15.7,15.7S184.8,78,193.5,78c8.7,0,15.7-7.1,15.7-15.7S202.2,46.5,193.5,46.5z'/></g><polygon fill='#3d3d3d' points='204.1,54.9 200.9,51.7 193.5,59.1 186.1,51.7 182.9,54.9 190.3,62.3 182.9,69.7 186.1,72.9 193.5,65.5 200.9,72.9 204.1,69.7 196.7,62.3'/></g></g></svg></div><div id='profile_url'></div></div>");
               
 
               // get the info profiles
