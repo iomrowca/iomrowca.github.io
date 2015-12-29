@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
     <title>DTM | Bangui</title>
 
@@ -158,18 +158,18 @@
 
 $("#data").prepend("<br><small>Cliquer sur un site pour avoir le detail des besoins humanitaires</small><br><hr>");
 
-  scsv = d3.dsv(';', "text/plain; charset=ISO-8859-1");
+  scsv = d3.dsv(';', "text/plain; charset=UTF-8");
 
     scsv("data/needs.csv", function(needs) {
     
     scsv("data/bangui_poi.csv", function(poi) {
+  
+    $("#info").css("display","block") 
 
-      $("#info").css("display","block") 
-
+    console.log(needs)
     //Add the lat and Long to the needs:
     needs.forEach(function(need_camp) {
-      //Join the values with the SSID
-      //TODO Clean the SSID in the google sheet 
+
       var chaincheck = need_camp.Tendency,
       dimi="Diminution",
       aug ="Augmentation",
@@ -189,9 +189,8 @@ $("#data").prepend("<br><small>Cliquer sur un site pour avoir le detail des beso
       need_camp.lat = (resjoin[0] !== undefined) ? resjoin[0].lat : null;
       need_camp.lng = (resjoin[0] !== undefined) ? resjoin[0].long : null;
       need_camp.geo =  (resjoin[0] !== undefined) ? resjoin[0].lat +","+resjoin[0].long : null;
-      need_camp.label =  (resjoin[0] !== undefined) ? resjoin[0]["Site_Name"]+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].Code_Site+","+need_camp['Total des PDIs']+","+need_camp["En evidence"]+","+need_camp.Evolution : "Unknow,0,0,Unknow,Unknow,Unknow,Unknow";
+      need_camp.label =  (resjoin[0] !== undefined) ? need_camp["Nom des Sites"]+","+resjoin[0].lat +","+resjoin[0].long+","+resjoin[0].Code_Site+","+need_camp['Total des PDIs']+","+need_camp["En evidence"]+","+need_camp.Evolution : "Unknow,0,0,Unknow,Unknow,Unknow,Unknow";
       
-
     });
     
 
