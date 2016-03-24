@@ -29,9 +29,7 @@
             description: false,
             search: false,
             tiles_loader: true,
-            center_lat: 13,
-            center_lon: 5,
-            zoom: 5
+            zoom: 6
         })
         .done(function(vis, layers) {
           // layer 0 is the base layer, layer 1 is cartodb layer
@@ -40,8 +38,13 @@
           layers[1].on('featureOver', function(e, latlng, pos, data) {
             cartodb.log.log(e, latlng, pos, data);
           });
+          
+          var southWest = L.latLng(-24.2578125,-7.501908262543394),
+          northEast = L.latLng(20.7421875,19.510093295273645),
+          bounds = L.latLngBounds(southWest, northEast);
           // you can get the native map to work with it
           var map = vis.getNativeMap();
+          map.setMaxBounds(bounds)
           // now, perform any operations you need
           // map.setZoom(3);
           // map.panTo([50.5, 30.5]);
